@@ -104,6 +104,7 @@ def download_plot():
         flash('Invalid download format')                        #Give an error message
         return redirect(url_for('upload_file'))                 #And try again
 
+
 def kernel_density_estimation(data, sigma, nsteps=1000):        #Get x and y points from a kernel density calculation
     result = np.zeros((nsteps, 2))                              #Create a new 2-D array of doubles called results
     x = np.linspace(min(data) - 2 * max(sigma),                 #Create an array of doubles called x, whose bounds are
