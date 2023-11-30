@@ -23,11 +23,19 @@
             <div class="text-center">
                 <h2 class="mt-4">Kernel Density Estimation Plot</h2>
                 <div>{{ graph_data|safe }}</div>
-
                 <!-- Download buttons -->
                 <div class="mt-3">
-                    <a href="/download?format=png" class="btn btn-success">Download as PNG</a>
-                    <a href="/download?format=svg" class="btn btn-success">Download as SVG</a>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            Download
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/download?format=png">PNG</a></li>
+                            <li><a class="dropdown-item" href="/download?format=svg">SVG</a></li>
+                            <li><a class="dropdown-item" href="/download?format=pdf">PDF</a></li>
+                            <li><a class="dropdown-item" href="/download?format=eps">EPS</a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         {% endif %}
