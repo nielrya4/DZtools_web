@@ -1,15 +1,10 @@
-import openpyxl
-import numpy as np
 import secrets
 import pdp
 import downloads
 import files
 from flask import (Flask, render_template, request, redirect, url_for, flash, Response, session)
 
-
 UPLOAD_FOLDER = 'uploads'                           #Set up some global standards
-
-
 
 app = Flask(__name__)                               #Configure the app to use...
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER         #   the upload folder
@@ -33,12 +28,12 @@ def main():
 
         if file and files.allowed_file(file.filename):    #If we got a file AND it is allowed,
             try:                                    #Let's try to...
-                data, sigma = files.read_excel(file)      #Read the excell file into data and sigma (uncertainty)
-                session['data'] = data              #Store data in the session
-                session['sigma'] = sigma            #Store sigma in the session
-                graph_data = pdp.plot_pdp(data, sigma)   #Get our x and y coordinates and store them in graph_data
+                all_data = files.read_excel(file)
+                session["all_data"] = all_data
+                graph_data = pdp.plot_pdp(all_data)
             except ValueError as e:                 #If it fails,
                 flash(str(e))                       #Send an error
+                print(f"{e}")
                 return redirect(request.url)        #Reload
 
     return render_template('index.html', graph_data=graph_data) #If it passes, add our graph data to index.html
