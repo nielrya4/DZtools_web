@@ -3,6 +3,7 @@ from io import BytesIO
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 import numpy as np
+from flask import (Flask, render_template, request, redirect, url_for, flash, Response, session)
 
 
 def probability_density_plot(data, sigma, nsteps=1000):
@@ -24,18 +25,33 @@ def probability_density_plot(data, sigma, nsteps=1000):
 
 
 def plot_pdp(all_data):
-    all_data.reverse()
-    subplots = len(all_data)
-    fig, axes = plt.subplots(subplots, figsize=(8, 6), dpi=100)  # Create subplots
+    try:
+        all_data.reverse()
+        subplots = len(all_data)
 
-    for i, data_set in enumerate(all_data):
-        header, data, sigma = data_set[0], data_set[1], data_set[2]
-        x, y = probability_density_plot(data, sigma)  # Calculate the (x,y) points from our data and uncertainty
-        axes[i].plot(x, y, label=header)  # Plot on the i-th subplot
-        axes[i].legend()  # Make it have a legend
+        # Check if there's only one subplot, if so, convert it to a list to avoid the issue
+        if subplots == 1:
+            subplots = [1]
+            fig, axes = plt.subplots(subplots[0], figsize=(8, 6), dpi=100, squeeze=False)  # Create subplots
+        else:
+            fig, axes = plt.subplots(subplots, figsize=(8, 6), dpi=100, squeeze=False)  # Create subplots
 
-    buf = BytesIO()  # Declare a temporary buffer
-    fig.savefig(buf, format="svg", bbox_inches="tight")  # Save the figure as SVG
-    data = buf.getvalue().decode("utf-8")
-    return f"<div>{data}</div>"  # Decode the SVG on the webpage
+        # If there's only one subplot, axes will be a 2D numpy array, so use axes[0] instead of axes[i]
+        for i, data_set in enumerate(all_data):
+            header, data, sigma = data_set[0], data_set[1], data_set[2]
+            x, y = probability_density_plot(data, sigma)  # Calculate the (x,y) points from our data and uncertainty
+
+            if subplots == 1:
+                axes[0, 0].plot(x, y, label=header)
+                axes[0, 0].legend()
+            else:
+                axes[i, 0].plot(x, y, label=header)  # Plot on the i-th subplot
+                axes[i, 0].legend()  # Make it have a legend
+        buf = BytesIO()  # Declare a temporary buffer
+        fig.savefig(buf, format="svg", bbox_inches="tight")  # Save the figure as SVG
+        graph_data = buf.getvalue().decode("utf-8")
+    except ValueError as e:  # If it fails,
+        print(f"{e}")
+        return redirect(request.url)  # Reload
+    return f"<div>{graph_data}</div>"  # Decode the SVG on the webpage
 
