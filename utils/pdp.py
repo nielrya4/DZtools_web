@@ -2,10 +2,13 @@
 from io import BytesIO
 import matplotlib.pyplot as plt
 import numpy as np
+from utils import format
 from flask import (Flask, render_template, request, redirect, url_for, flash, Response, session)
 
 
 def probability_density_plot(data, sigma, nsteps=1000):
+    data = format.trim_none(data)
+    sigma = format.trim_none(sigma)
     x = np.linspace((min(min(row) for row in data)) - (2 * max(max(row) for row in sigma)),
                     (max(max(row) for row in data)) + (2 * max(max(row) for row in sigma)),
                     nsteps)
