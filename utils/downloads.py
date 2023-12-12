@@ -1,8 +1,7 @@
 from io import BytesIO
 from flask import Response, session
 import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
-import pdp
+from utils import pdp
 
 
 def download_image_from_session(format, filename):

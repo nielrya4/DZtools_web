@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>KDE Plotter</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='/DZ.ico') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+    <div class="container mt-5">
+        <div class="row">
+        <h1 class="text-center mb-4">KDE Plotter</h1>
+            <div class="col-md-8">
+                <form method="post" action="/kde/" enctype="multipart/form-data" id="fileForm" class="mb-4">
+                    <div class="mb-3">
+                        <label for="file" class="form-label">Choose an Excel file (.xlsx or .xls)</label>
+                        <input type="file" name="file" class="form-control" id="file" accept=".xlsx, .xls" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Upload and Plot</button>
+                </form>
+
+                {% if graph_data %}
+                    <div class="text-center">
+                        <div>{{ graph_data|safe }}</div>
+                        <!-- Download buttons -->
+                        <div class="mt-3">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    Download
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" href="/download_graph?format=png">PNG</a></li>
+                                    <li><a class="dropdown-item" href="/download_graph?format=svg">SVG</a></li>
+                                    <li><a class="dropdown-item" href="/download_graph?format=pdf">PDF</a></li>
+                                    <li><a class="dropdown-item" href="/download_graph?format=eps">EPS</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="col-md-4">
+                <!-- Add your buttons, textboxes, and labels here -->
+                <div class="mb-3">
+                    <label for="exampleTextbox" class="form-label">Example Textbox</label>
+                    <input type="text" class="form-control" id="exampleTextbox">
+                </div>
+                <button class="btn btn-secondary">Example Button</button>
+                <!-- Add more elements as needed -->
+            </div>
+        </div>
+    </div>
+
+    <br />
+    <br />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

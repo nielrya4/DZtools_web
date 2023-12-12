@@ -1,7 +1,6 @@
 # pdp.py
 from io import BytesIO
 import matplotlib.pyplot as plt
-from matplotlib.figure import Figure
 import numpy as np
 from flask import (Flask, render_template, request, redirect, url_for, flash, Response, session)
 
@@ -55,3 +54,24 @@ def plot_pdp(all_data):
         return redirect(request.url)  # Reload
     return f"<div>{graph_data}</div>"  # Decode the SVG on the webpage
 
+
+def get_y_values(all_data):
+    all_y_values = []
+    try:
+        all_data.reverse()
+        for i, data_set in enumerate(all_data):
+            header, data, sigma = data_set[0], data_set[1], data_set[2]
+            x, y = probability_density_plot(data, sigma)  # Calculate the (x,y) points from our data and uncertainty
+            all_y_values.append(y)
+    except ValueError as e:  # If it fails,
+        print(f"{e}")
+    return all_y_values
+
+
+def get_headers(all_data):
+    all_headers = []
+    all_data.reverse()
+    for i, data_set in enumerate(all_data):
+        header = data_set[0]
+        all_headers.append(header)
+    return all_headers
