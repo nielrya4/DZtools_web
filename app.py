@@ -1,11 +1,12 @@
 import secrets
 import os
 from io import BytesIO
-from utils import downloads, files, pdp
+from utils import downloads, files, pdp, cdf, kde
 from flask import (Flask, render_template, request, redirect, url_for, flash, session, send_from_directory, send_file)
 
 UPLOAD_FOLDER = 'uploads'                           #Set up some global standards
-
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 app = Flask(__name__)                               #Configure the app to use...
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER         #   the upload folder
 app.config['SECRET_KEY'] = secrets.token_hex(16)    #   and a new secret key for each session
@@ -14,6 +15,37 @@ app.config['SECRET_KEY'] = secrets.token_hex(16)    #   and a new secret key for
 @app.route('/')
 def main():
     return render_template('index.html')
+
+
+@app.route('/dz_stats/', methods=['GET', 'POST'])
+def dz_stats():
+    graph_data = None
+    cdf_data = None
+    similarity_data = None
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and files.allowed_file(file.filename):
+            try:
+                all_data = files.read_pdp_excel(file)
+                session["all_data"] = all_data
+                graph_data = kde.plot_kde_unido(all_data, 5)
+                cdf_data = cdf.plot_cdf(all_data)
+                row_labels = kde.get_headers(all_data)
+                col_labels = kde.get_headers(all_data)
+                col_labels.reverse()
+                similarity_data = files.generate_excel_data(kde.get_y_values(all_data), row_labels=row_labels, col_labels=col_labels)
+            except ValueError as e:
+                flash(str(e))
+                print(f"{e}")
+                return redirect(request.url)
+
+    return render_template('dz_stats.html', graph_data=graph_data, cdf_data=cdf_data, similarity_data=similarity_data) #If it passes, add our graph data to index.html
 
 
 @app.route('/pdp/', methods=['GET', 'POST'])       #Our main loop
@@ -85,6 +117,7 @@ def download_plot():
     else:
         flash('Invalid download format')
         return redirect(url_for('main'))
+
 
 @app.route('/download_excel')
 def download_excel():
