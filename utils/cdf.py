@@ -25,7 +25,7 @@ def plot_cdf(all_data, nsteps=1000):
             count, bins_count = np.histogram(filtered_data, bins=nsteps, density=True)
             pdf = count / sum(count)
             cdf_values = np.cumsum(pdf)
-            ax.plot(bins_count[1:], cdf_values, label=f"CDF {i + 1}")
+            ax.plot(bins_count[1:], cdf_values, label=header)
 
         # Add title and labels
         ax.set_title("Cumulative Distribution Function (CDF)")

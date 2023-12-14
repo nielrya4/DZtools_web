@@ -6,20 +6,28 @@
     <title>PDP Plotter</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='/DZ.ico') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa; /* Bootstrap default background color */
-        }
-
-        .container {
-            max-width: 1000px; /* Set the maximum width of the container */
-            margin: 0 auto; /* Center the container */
-            margin-left: 50px; /* Adjust the left margin as needed */
-            margin-right: 50px;
-        }
-    </style>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/default.css') }}">
 </head>
 <body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <a id="dztools-link" href="{{ url_for('main') }}" class="nav-link mt-1">
+                <img src="{{ url_for('static', filename='/DZ.ico') }}" alt="DZ.ico" style="width: 64px; height: 64px;">
+                DZtools
+            </a>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/pdp/">PDP Plotter</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/kde/">KDE Plotter</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dz_stats/">DZstats</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <div class="container mt-5">
         <h1 class="text-left mb-4">PDP Plotter</h1>
         <form method="post" action="/pdp/" enctype="multipart/form-data" id="fileForm" class="mb-4">
@@ -53,7 +61,7 @@
                 <br />
                 <br />
                 {% if similarity_data is not none %}
-                    {{ similarity_data.to_html(classes="table table-bordered table-striped", justify="center")|safe }}
+                    {{ similarity_data.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')|safe }}
                     <div class="col-md-3">
                         <div class="mt-3">
                             <div class="btn-group">

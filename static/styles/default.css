@@ -1,0 +1,53 @@
+        body {
+            background: linear-gradient(to bottom, #000000, #001f3f);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar {
+            background-color: #001f3f;
+            font-size: 18px;
+        }
+
+        .navbar-light .navbar-brand {
+            color: cyan;
+        }
+
+        .navbar-light .navbar-nav .nav-link {
+            color: cyan;
+        }
+
+        .navbar-light .navbar-brand:hover {
+            color: white;
+        }
+
+        .navbar-light .navbar-nav .nav-link:hover {
+            color: white;
+        }
+
+        .container {
+            max-width: 1000px; /* Set the maximum width of the container */
+            margin: 0 auto; /* Center the container */
+            margin-left: 50px; /* Adjust the left margin as needed */
+            margin-right: 50px;
+        }
+
+        .navbar-brand img {
+            margin-right: 5px;
+        }
+
+            /* Custom CSS for color changes */
+        #dztools-link {
+            color: cyan !important; /* Set the default color to cyan */
+        }
+
+        #dztools-link.active {
+            color: cyan !important; /* Keep the color cyan when clicked */
+        }
+
+        #dztools-link:hover {
+            color: white !important; /* Change color to white on hover */
+        }
