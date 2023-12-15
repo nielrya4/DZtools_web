@@ -28,7 +28,7 @@ def plot_cdf(all_data, nsteps=1000):
             ax.plot(bins_count[1:], cdf_values, label=header)
 
         # Add title and labels
-        ax.set_title("Cumulative Distribution Function (CDF)")
+        ax.set_title("Cumulative Distribution Function")
 
         # Move the legend outside of the graph
         ax.legend(loc='upper left', bbox_to_anchor=(1, 1))

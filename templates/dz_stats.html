@@ -30,59 +30,84 @@
     </nav>
     <div class="container mt-5">
         <h1 class="text-left mb-4">DZstats</h1>
-        <form method="post" action="/dz_stats/" enctype="multipart/form-data" id="fileForm" class="mb-4">
-            <div class="mb-3">
-                <label for="file" class="form-label">Choose an Excel file (.xlsx or .xls)</label>
-                <input type="file" name="file" class="form-control" id="file" accept=".xlsx, .xls" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Upload and Plot</button>
-        </form>
-        <div class="col-md-9">
-            <div class="row">
-                {% if graph_data %}
-                    <div class="text-left">
-                        <div>{{ graph_data|safe }}</div>
-                        <!-- Download buttons -->
-                        <div class="mt-3">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Download KDE
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/download_graph?format=png">PNG</a></li>
-                                    <li><a class="dropdown-item" href="/download_graph?format=svg">SVG</a></li>
-                                    <li><a class="dropdown-item" href="/download_graph?format=pdf">PDF</a></li>
-                                    <li><a class="dropdown-item" href="/download_graph?format=eps">EPS</a></li>
-                                </ul>
-                            </div>
+        <div class="col-md9">
+            <form method="post" action="/dz_stats/" enctype="multipart/form-data" id="fileForm" class="mb-4">
+                <div class="mb-3">
+                    <div class="row">
+                        <label for="file" class="form-label">Choose an Excel file (.xlsx or .xls)</label>
+                        <div class="col-md-8">
+                            <input type="file" name="file" class="form-control" id="file" accept=".xlsx, .xls" required>
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label>Sigma: </label>
+                            <label><input type="radio" name="kde_sigma" value="1" {% if kde_sigma == 1 %}checked{% endif %}> 1σ</label>
+                            <label><input type="radio" name="kde_sigma" value="2" {% if kde_sigma == 2 %}checked{% endif %}> 2σ</label>
                         </div>
                     </div>
-                {% endif %}
+                </div>
+                <button type="submit" class="btn btn-primary">Upload and Plot</button>
+            </form>
+        </div>
+        <div class="col-md-9">
+            {% if graph_data %}
+            <div class="text-left">
+                <div>{{ graph_data|safe }}</div>
+                <div class="mt-3">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            Download KDE
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/download_kde?format=png">PNG</a></li>
+                            <li><a class="dropdown-item" href="/download_kde?format=svg">SVG</a></li>
+                            <li><a class="dropdown-item" href="/download_kde?format=pdf">PDF</a></li>
+                            <li><a class="dropdown-item" href="/download_kde?format=eps">EPS</a></li>
+                        </ul>
+                    </div>
+                </div>
             </div>
+            {% endif %}
             <br />
-            <div class="row">
-                {% if cdf_data %}
-                    <div class="text-left">
-                        <div>{{ cdf_data|safe }}</div>
-                        <!-- Download buttons -->
+            <br />
+            {% if cdf_data %}
+                <div class="text-left">
+                    <div>{{ cdf_data|safe }}</div>
                         <div class="mt-3">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                     Download CDF
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item" href="/download_graph?format=png">PNG</a></li>
-                                    <li><a class="dropdown-item" href="/download_graph?format=svg">SVG</a></li>
-                                    <li><a class="dropdown-item" href="/download_graph?format=pdf">PDF</a></li>
-                                    <li><a class="dropdown-item" href="/download_graph?format=eps">EPS</a></li>
+                                    <li><a class="dropdown-item" href="/download_cdf?format=png">PNG</a></li>
+                                    <li><a class="dropdown-item" href="/download_cdf?format=svg">SVG</a></li>
+                                    <li><a class="dropdown-item" href="/download_cdf?format=pdf">PDF</a></li>
+                                    <li><a class="dropdown-item" href="/download_cdf?format=eps">EPS</a></li>
                                 </ul>
-                            </div>
+                             </div>
                         </div>
                     </div>
-                {% endif %}
-            </div>
+                </div>
+            {% endif %}
+            <br />
+            <br />
+            {% if similarity_data is not none %}
+                {{ similarity_data.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')|safe }}
+                <div class="col-md-3">
+                    <div class="mt-3">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Download Similarity Matrix
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xlsx') }}">XLSX</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xls') }}">XLS</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='csv') }}">CSV</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
         </div>
-    </div>
     <br />
     <br />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
