@@ -6,19 +6,42 @@ from utils import format
 from flask import (request, redirect)
 
 
-def kernel_density_estimate(data, sigma, nsteps=1000):
+def get_x_max(all_data):
+    data_values = []
+    for data_set in all_data:
+        data_values += (value for value in data_set[1])
+    x_max = np.max(data_values)
+    return x_max
+
+
+def get_x_min(all_data):
+    data_values = []
+    for data_set in all_data:
+        data_values += (value for value in data_set[1])
+    x_min = np.min(data_values)
+    return x_min
+
+
+def kernel_density_estimate(data, bandwidth, nsteps=4000, x_min=0, x_max=4000):
     data = format.trim_none(data)
-    x = np.linspace((min(min(row) for row in data)) - (2 * max(max(row) for row in sigma)),
-                    (max(max(row) for row in data)) + (2 * max(max(row) for row in sigma)),
-                    nsteps)
+    # x_min = min(min(row) for row in data) - (2 * max(max(row) for row in bandwidth))
+    # x_max = x_min + 4000  # Set the x-axis span to be exactly 4000 units
+    x = np.linspace(x_min, x_max, nsteps)
     y = np.zeros(nsteps)
     N = len(data)
 
     for i in range(N):
-        for s in sigma[i]:
-            y = (y + 1.0 / N *
-                 (1.0 / (np.sqrt(2 * np.pi) * s)) *
-                 np.exp(-(x - float(data[i][0])) ** 2 / (2 * float(s) ** 2)))
+        kernel_sum = np.zeros(nsteps)
+        for s in bandwidth[i]:
+            kernel_sum += (1.0 / (np.sqrt(2 * np.pi) * s)) * np.exp(-(x - float(data[i][0])) ** 2 / (2 * float(s) ** 2))
+
+        # Normalize the kernel_sum for the current data point
+        kernel_sum /= np.sum(kernel_sum)
+        # Add the normalized kernel_sum to the overall y
+        y += kernel_sum
+
+    # Normalize the final y to make the area under the curve equal to 1
+    y /= np.sum(y)
     return x, y
 
 
@@ -26,7 +49,8 @@ def plot_kde(all_data):
     try:
         all_data.reverse()
         subplots = len(all_data)
-
+        x_max = get_x_max(all_data)
+        x_min = get_x_min(all_data)
         # Check if there's only one subplot, if so, convert it to a list to avoid the issue
         if subplots == 1:
             subplots = [1]
@@ -37,7 +61,7 @@ def plot_kde(all_data):
         # If there's only one subplot, axes will be a 2D numpy array, so use axes[0] instead of axes[i]
         for i, data_set in enumerate(all_data):
             header, data, sigma = data_set[0], data_set[1], data_set[2]
-            x, y = kernel_density_estimate(data, sigma)  # Calculate the (x,y) points from our data and uncertainty
+            x, y = kernel_density_estimate(data, sigma, x_max=x_max, x_min=x_min)  # Calculate the (x,y) points from our data and uncertainty
 
             if subplots == 1:
                 axes[0, 0].plot(x, y, label=header)
@@ -59,6 +83,9 @@ def plot_kde_unido(all_data):
         all_data.reverse()
         subplots = len(all_data)
 
+        x_max = get_x_max(all_data) + get_x_max(all_data)/10
+        x_min = get_x_min(all_data) - get_x_max(all_data)/10
+
         # Check if there's only one subplot, if so, convert it to a list to avoid the issue
         if subplots == 1:
             subplots = [1]
@@ -69,11 +96,11 @@ def plot_kde_unido(all_data):
         # Plot all lines on the same subplot
         for i, data_set in enumerate(all_data):
             header, data, sigma = data_set[0], data_set[1], data_set[2]
-            x, y = kernel_density_estimate(data, sigma)  # Calculate the (x,y) points from our data and uncertainty
+            x, y = kernel_density_estimate(data, sigma, x_max=x_max, x_min=x_min)  # Calculate the (x,y) points from our data and uncertainty
             ax.plot(x, y, label=header)
 
         # Add title and labels
-        ax.set_title(f"Kernel Density Estimate ({sigma[0][0]}σ)")
+        ax.set_title(f"Kernel Density Estimate (Bandwidth: {sigma[0][0]})")
 
         # Move the legend outside of the graph
         ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
@@ -84,7 +111,7 @@ def plot_kde_unido(all_data):
         graph_data = buf.getvalue().decode("utf-8")
 
     except ValueError as e:  # If it fails,
-        print(f"{e}")
+        print(f"KDE error: {e}")
         return None  # Handle the exception as needed
 
     return f"<div>{graph_data}</div>"  # Decode the SVG on the webpage

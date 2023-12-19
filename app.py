@@ -1,7 +1,7 @@
 import os, secrets, schedule, threading, time
 from io import BytesIO
 from utils import downloads, files, pdp, cdf, kde
-from flask import Flask, render_template, request, redirect, flash, send_from_directory, send_file
+from flask import Flask, render_template, request, redirect, flash, send_from_directory, send_file, Blueprint
 
 UPLOAD_FOLDER = 'uploads'
 DATA_FOLDER = 'data'  # Folder to store data server-side
@@ -33,12 +33,12 @@ def dz_stats():
     graph_data = None
     cdf_data = None
     similarity_data = None
-    kde_sigma = 1
+    kde_bandwidth = 10
     if request.method == 'POST':
         if 'file' not in request.files:
             print('Incomplete form submission')
             return redirect(request.url)
-        kde_sigma = int(request.form['kde_sigma'])
+        kde_bandwidth = int(request.form['kde_bandwidth'])
         file = request.files['file']
         if file.filename == '':
             flash('No selected file')
@@ -48,7 +48,7 @@ def dz_stats():
                 all_data = files.read_excel(file)
                 for i in range(0, len(all_data)):
                     for j in range(0, len(all_data[i][2])):
-                        all_data[i][2][j] = (kde_sigma,)
+                        all_data[i][2][j] = (kde_bandwidth,)
                 all_data.reverse()
                 # Save data to the file system
                 filename = SECRET_KEY + 'all_data.pkl'
@@ -59,14 +59,14 @@ def dz_stats():
                 cdf_data = cdf.plot_cdf(all_data)
                 row_labels = kde.get_headers(all_data)
                 col_labels = kde.get_headers(all_data)
-                row_labels.reverse()
+                col_labels.reverse()
                 similarity_data = files.generate_excel_data(kde.get_y_values(all_data), row_labels=row_labels,
                                                              col_labels=col_labels)
             except ValueError as e:
                 flash(str(e))
                 print(f"{e}")
                 return redirect(request.url)
-    return render_template('dz_stats.html', graph_data=graph_data, kde_sigma=kde_sigma, cdf_data=cdf_data,
+    return render_template('dz_stats.html', graph_data=graph_data, kde_bandwidth=kde_bandwidth, cdf_data=cdf_data,
                            similarity_data=similarity_data)
 
 

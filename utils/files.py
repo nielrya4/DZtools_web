@@ -41,11 +41,10 @@ def generate_excel_data(y_value_arrays, row_labels=None, col_labels=None):
 
     for i, y1 in enumerate(y_value_arrays):
         for j, y2 in enumerate(y_value_arrays):
-            similarity_score = np.sqrt(np.sum(np.multiply(y1, y2)))
+            # print(f"Y1 VALUE {y1}")
+            # print(f"Y2 VALUE {y2}")
+            similarity_score = np.sum(np.sqrt(np.multiply(y1, y2)))
             similarity_matrix[i, j] = similarity_score
-
-    # Normalize the similarity matrix to have scores in the range [0, 1]
-    normalized_similarity_matrix = similarity_matrix / similarity_matrix.max(axis=1, keepdims=True)
 
     # Create a DataFrame with the normalized similarity scores and labels
     if row_labels is None:
@@ -54,7 +53,7 @@ def generate_excel_data(y_value_arrays, row_labels=None, col_labels=None):
     if col_labels is None:
         col_labels = [f'Data {i+1}' for i in range(num_data_sets)]
 
-    df = pd.DataFrame(normalized_similarity_matrix, columns=col_labels, index=row_labels)
+    df = pd.DataFrame(similarity_matrix, columns=col_labels, index=row_labels)
 
     return df
 

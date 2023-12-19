@@ -38,10 +38,11 @@
                         <div class="col-md-8">
                             <input type="file" name="file" class="form-control" id="file" accept=".xlsx, .xls" required>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-4 mt-2">
-                            <label>Sigma: </label>
-                            <label><input type="radio" name="kde_sigma" value="1" {% if kde_sigma == 1 %}checked{% endif %}> 1σ</label>
-                            <label><input type="radio" name="kde_sigma" value="2" {% if kde_sigma == 2 %}checked{% endif %}> 2σ</label>
+                            <label>Bandwidth: </label>
+                            <label><input type="text" name="kde_bandwidth" value="10"></label>
                         </div>
                     </div>
                 </div>

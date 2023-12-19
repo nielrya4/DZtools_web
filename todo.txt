@@ -1,3 +1,7 @@
--setup KDE plotter (PDP with set uncertainty) with same functionality as PDP
--find better layout
--abstract code correctly
+Implement tests for DZ stats
+
+PDP deals with sigma & KDE deals with bandwidth
+    Refactor variables appropriately
+
+Force user to input 2 sigma data... or else
+
