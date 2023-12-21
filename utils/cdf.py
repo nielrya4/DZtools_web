@@ -2,9 +2,6 @@ from io import BytesIO
 import matplotlib.pyplot as plt
 import numpy as np
 from utils import format
-from flask import (Flask, render_template, request, redirect, url_for, flash, Response, session)
-
-import utils.format
 
 
 def plot_cdf(all_data, nsteps=1000):

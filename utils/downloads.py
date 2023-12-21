@@ -1,10 +1,8 @@
 from io import BytesIO
-from flask import Response, session, request, flash, redirect, url_for
+from flask import Response, request, flash, redirect, url_for
 import matplotlib.pyplot as plt
 import numpy as np
-from utils import pdp, kde, files
-import app
-
+from utils import pdp, kde
 
 def download_plot(all_data, plot_type):
     format = request.args.get('format', 'png')

@@ -1,9 +1,8 @@
-# pdp.py
 from io import BytesIO
 import matplotlib.pyplot as plt
 import numpy as np
 from utils import format
-from flask import (Flask, render_template, request, redirect, url_for, flash, Response, session)
+from flask import (request, redirect)
 
 
 def probability_density_plot(data, sigma, nsteps=1000):
