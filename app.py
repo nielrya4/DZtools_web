@@ -236,6 +236,11 @@ def download_excel():
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'static/DZ.ico', mimetype='image/vnd.microsoft.icon')
+@app.route('/menu.ico')
+def menu_icon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'static/menu.ico', mimetype='image/vnd.microsoft.icon')
+
 
 
 # Cleaning up data folder-----------------------------------------------------------------------------------------------

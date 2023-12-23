@@ -10,6 +10,8 @@
         .navbar {
             background-color: #001f3f;
             font-size: 18px;
+            width: 100%;
+
         }
 
         .navbar-light .navbar-brand {
@@ -50,4 +52,35 @@
 
         #dztools-link:hover {
             color: white !important; /* Change color to white on hover */
+        }
+        .usually-hidden {
+                display: none; /* Hide the icon on small screens */
+            }
+                /* CSS for small screens */
+        @media (max-width: 1000px) {
+            .navbar-icon {
+                display: none; /* Hide the icon on small screens */
+            }
+            .usually-hidden {
+                display: flex; /* Hide the icon on small screens */
+            }
+            .navbar-brand img {
+            margin-right: 0;
+            }
+            .navbar-collapse {
+                padding: 10px; /* Remove padding in the collapsed state */
+            }
+
+            .navbar-nav {
+                margin-top: 0; /* Remove top margin for the navbar items */
+            }
+
+            .navbar-nav .nav-item {
+                margin: 0; /* Remove margin for individual navbar items */
+            }
+
+            .navbar-nav .nav-link {
+                padding: 1rem 0; /* Adjust as needed */
+                margin: 0; /* Remove margin for individual navbar links */
+            }
         }

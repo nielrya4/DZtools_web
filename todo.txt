@@ -1,9 +1,5 @@
-Implement tests for DZ stats
-
 PDP deals with sigma & KDE deals with bandwidth
     Refactor variables appropriately
-
-Force user to input 2 sigma data... or else
 
 Fix the navbar (disappears instead of getting smaller)
     change it to have a 3-line thing and a drop-down menu when it gets too small
