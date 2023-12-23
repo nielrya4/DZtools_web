@@ -92,6 +92,7 @@
             <br />
             <br />
             {% if similarity_data is not none %}
+                <h3>Similarity Matrix</h3>
                 {{ similarity_data.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')|safe }}
                 <div class="col-md-3">
                     <div class="mt-3">
@@ -100,9 +101,89 @@
                                 Download Similarity Matrix
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xlsx') }}">XLSX</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xls') }}">XLS</a></li>
-                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='csv') }}">CSV</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xlsx', matrix_type="similarity") }}">XLSX</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xls', matrix_type="similarity") }}">XLS</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='csv', matrix_type="similarity") }}">CSV</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <br />
+            <br />
+            {% if likeness_data is not none %}
+                <h3>Likeness Matrix</h3>
+                {{ likeness_data.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')|safe }}
+                <div class="col-md-3">
+                    <div class="mt-3">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Download Likeness Matrix
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xlsx', matrix_type="likeness") }}">XLSX</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xls', matrix_type="likeness") }}">XLS</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='csv', matrix_type="likeness") }}">CSV</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <br />
+            <br />
+            {% if ks_data is not none %}
+                <h3>KS Test Matrix</h3>
+                {{ ks_data.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')|safe }}
+                <div class="col-md-3">
+                    <div class="mt-3">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Download KS Test Matrix
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xlsx', matrix_type="ks") }}">XLSX</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xls', matrix_type="ks") }}">XLS</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='csv', matrix_type="ks") }}">CSV</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <br />
+            <br />
+            {% if kuiper_data is not none %}
+                <h3>Kuiper Test Matrix</h3>
+                {{ kuiper_data.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')|safe }}
+                <div class="col-md-3">
+                    <div class="mt-3">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Download Kuiper Test Matrix
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xlsx', matrix_type="kuiper") }}">XLSX</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xls', matrix_type="kuiper") }}">XLS</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='csv', matrix_type="kuiper") }}">CSV</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            <br />
+            <br />
+            {% if cross_correlation_data is not none %}
+                <h3>Cross-Correlation Matrix</h3>
+                {{ cross_correlation_data.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')|safe }}
+                <div class="col-md-3">
+                    <div class="mt-3">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                Download Cross Correlation Matrix
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xlsx', matrix_type="cross_correlation") }}">XLSX</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xls', matrix_type="cross_correlation") }}">XLS</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('download_excel', format='csv', matrix_type="cross_correlation") }}">CSV</a></li>
                             </ul>
                         </div>
                     </div>

@@ -21,16 +21,14 @@ def get_x_min(all_data):
     return x_min
 
 
-def kernel_density_estimate(data, bandwidth, nsteps=4000, x_min=0, x_max=4000):
+def kernel_density_estimate(data, bandwidth, num_steps=4000, x_min=0, x_max=4000):
     data = format.trim_none(data)
-    # x_min = min(min(row) for row in data) - (2 * max(max(row) for row in bandwidth))
-    # x_max = x_min + 4000  # Set the x-axis span to be exactly 4000 units
-    x = np.linspace(x_min, x_max, nsteps)
-    y = np.zeros(nsteps)
-    N = len(data)
+    x = np.linspace(x_min, x_max, num_steps)
+    y = np.zeros(num_steps)
+    n = len(data)
 
-    for i in range(N):
-        kernel_sum = np.zeros(nsteps)
+    for i in range(n):
+        kernel_sum = np.zeros(num_steps)
         for s in bandwidth[i]:
             kernel_sum += (1.0 / (np.sqrt(2 * np.pi) * s)) * np.exp(-(x - float(data[i][0])) ** 2 / (2 * float(s) ** 2))
 

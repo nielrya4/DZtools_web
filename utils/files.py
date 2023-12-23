@@ -1,13 +1,15 @@
 import openpyxl
 import pandas as pd
 import numpy as np
-from utils import format
+from utils import format, measures
 import pickle
 
 ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
 
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def read_excel(file):
     try:
@@ -20,7 +22,7 @@ def read_excel(file):
 
         all_data = []
         for col in range(1, num_cols + 1, 2):
-            if sheet.cell(row=1, column=col).value != None:
+            if sheet.cell(row=1, column=col).value is not None:
                 header = f"{sheet.cell(row=1, column=col).value}"
                 data = format.trim_none([value for value in sheet.iter_rows(min_col=col, max_col=col, min_row=2, values_only=True)])
                 sigma = format.trim_none([value for value in sheet.iter_rows(min_col=col + 1, max_col=col + 1, min_row=2, values_only=True)])
@@ -34,32 +36,50 @@ def read_excel(file):
     return all_data
 
 
-def generate_excel_data(y_value_arrays, row_labels=None, col_labels=None):
+def generate_matrix(y_value_arrays, row_labels=None, col_labels=None, matrix_type="similarity"):
     num_data_sets = len(y_value_arrays)
-    similarity_matrix = np.zeros((num_data_sets, num_data_sets))
+    matrix = np.zeros((num_data_sets, num_data_sets))
 
-    for i, y1 in enumerate(y_value_arrays):
-        for j, y2 in enumerate(y_value_arrays):
-            # print(f"Y1 VALUE {y1}")
-            # print(f"Y2 VALUE {y2}")
-            similarity_score = np.sum(np.sqrt(np.multiply(y1, y2)))
-            similarity_matrix[i, j] = similarity_score
+    if matrix_type == "similarity":
+        for i, y1 in enumerate(y_value_arrays):
+            for j, y2 in enumerate(y_value_arrays):
+                similarity_score = measures.similarity_test(y1, y2)
+                matrix[i, j] = similarity_score
+    elif matrix_type == "likeness":
+        for i, y1 in enumerate(y_value_arrays):
+            for j, y2 in enumerate(y_value_arrays):
+                likeness_score = measures.likeness_test(y1, y2)
+                matrix[i, j] = likeness_score
+    elif matrix_type == "ks":
+        for i, y1 in enumerate(y_value_arrays):
+            for j, y2 in enumerate(y_value_arrays):
+                ks_score = measures.ks_test(y1, y2)
+                matrix[i, j] = ks_score
+    elif matrix_type == "kuiper":
+        for i, y1 in enumerate(y_value_arrays):
+            for j, y2 in enumerate(y_value_arrays):
+                kuiper_score = measures.kuiper_test(y1, y2)
+                matrix[i, j] = kuiper_score
+    elif matrix_type == "cross_correlation":
+        for i, y1 in enumerate(y_value_arrays):
+            for j, y2 in enumerate(y_value_arrays):
+                cross_correlation_score = measures.cross_correlation_test(y1, y2)
+                matrix[i, j] = cross_correlation_score
 
     # Create a DataFrame with the normalized similarity scores and labels
     if row_labels is None:
         row_labels = [f'Data {i+1}' for i in range(num_data_sets)]
-
     if col_labels is None:
         col_labels = [f'Data {i+1}' for i in range(num_data_sets)]
 
-    df = pd.DataFrame(similarity_matrix, columns=col_labels, index=row_labels)
-
+    df = pd.DataFrame(matrix, columns=col_labels, index=row_labels)
     return df
 
 
 def save_data_to_file(data, filepath):
     with open(filepath, 'wb') as file:
         pickle.dump(data, file)
+
 
 # Example of reading data from a file
 def read_data_from_file(filepath):

@@ -4,11 +4,10 @@ from utils import downloads, files, pdp, cdf, kde
 from flask import Flask, render_template, request, redirect, flash, send_from_directory, send_file
 
 UPLOAD_FOLDER = 'uploads'
-DATA_FOLDER = 'data'  # Folder to store data server-side
+DATA_FOLDER = 'data'
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
-
 if not os.path.exists(DATA_FOLDER):
     os.makedirs(DATA_FOLDER)
 
@@ -30,9 +29,8 @@ def main():
 
 @app.route('/dz_stats/', methods=['GET', 'POST'])
 def dz_stats():
-    graph_data = None
-    cdf_data = None
-    similarity_data = None
+    graph_data, cdf_data, similarity_data, likeness_data, ks_data, kuiper_data, cross_correlation_data \
+        = None, None, None, None, None, None, None
     kde_bandwidth = 10
     if request.method == 'POST':
         if 'file' not in request.files:
@@ -57,36 +55,63 @@ def dz_stats():
 
                 graph_data = kde.plot_kde_unido(all_data)
                 cdf_data = cdf.plot_cdf(all_data)
+
                 row_labels = kde.get_headers(all_data)
                 col_labels = kde.get_headers(all_data)
                 col_labels.reverse()
-                similarity_data = files.generate_excel_data(kde.get_y_values(all_data), row_labels=row_labels,
-                                                             col_labels=col_labels)
+
+                similarity_data = files.generate_matrix(kde.get_y_values(all_data),
+                                                        row_labels=row_labels,
+                                                        col_labels=col_labels,
+                                                        matrix_type="similarity")
+                likeness_data = files.generate_matrix(kde.get_y_values(all_data),
+                                                      row_labels=row_labels,
+                                                      col_labels=col_labels,
+                                                      matrix_type="likeness")
+                ks_data = files.generate_matrix(kde.get_y_values(all_data),
+                                                row_labels=row_labels,
+                                                col_labels=col_labels,
+                                                matrix_type="ks")
+                kuiper_data = files.generate_matrix(kde.get_y_values(all_data),
+                                                    row_labels=row_labels,
+                                                    col_labels=col_labels,
+                                                    matrix_type="kuiper")
+                cross_correlation_data = files.generate_matrix(kde.get_y_values(all_data),
+                                                               row_labels=row_labels,
+                                                               col_labels=col_labels,
+                                                               matrix_type="cross_correlation")
             except ValueError as e:
                 flash(str(e))
                 print(f"{e}")
                 return redirect(request.url)
-    return render_template('dz_stats.html', graph_data=graph_data, kde_bandwidth=kde_bandwidth, cdf_data=cdf_data,
-                           similarity_data=similarity_data)
+    return render_template('dz_stats.html',
+                           graph_data=graph_data,
+                           kde_bandwidth=kde_bandwidth,
+                           cdf_data=cdf_data,
+                           similarity_data=similarity_data,
+                           likeness_data=likeness_data,
+                           ks_data=ks_data,
+                           kuiper_data=kuiper_data,
+                           cross_correlation_data=cross_correlation_data)
 
 
-@app.route('/pdp/', methods=['GET', 'POST'])       #Our main loop
+@app.route('/pdp/', methods=['GET', 'POST'])  # App route for the PDP page
 def pdp_page():
-    graph_data = None                               #Set up a place for our eventual graph data
+    graph_data = None
     similarity_data = None
-    if request.method == 'POST':                    #If the front end sends us information...
-        if 'file' not in request.files:             #Check if it sent us a file
-            flash('No file part')                   #If not, say so.
-            return redirect(request.url)            #Reload
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
 
-        file = request.files['file']                #Otherwise, set file equal to all the files uploaded
+        file = request.files['file']
 
-        if file.filename == '':                     #If the filename is blank,
-            flash('No selected file')               #Say so
-            return redirect(request.url)            #And reload
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
 
-        if file and files.allowed_file(file.filename):    #If we got a file AND it is allowed,
-            try:                                    #Let's try to...
+        if file and files.allowed_file(file.filename):
+            try:
                 all_data = files.read_excel(file)
                 all_data.reverse()
                 filename = SECRET_KEY + 'all_data.pkl'
@@ -96,97 +121,109 @@ def pdp_page():
                 row_labels = pdp.get_headers(all_data)
                 col_labels = pdp.get_headers(all_data)
                 row_labels.reverse()
-                similarity_data = files.generate_excel_data(pdp.get_y_values(all_data), row_labels=row_labels, col_labels=col_labels)
-            except ValueError as e:                 #If it fails,
-                flash(str(e))                       #Send an error
+                similarity_data = files.generate_matrix(pdp.get_y_values(all_data),
+                                                        row_labels=row_labels,
+                                                        col_labels=col_labels)
+            except ValueError as e:
+                flash(str(e))
                 print(f"{e}")
-                return redirect(request.url)        #Reload
+                return redirect(request.url)
 
-    return render_template('pdp.html', graph_data=graph_data, similarity_data=similarity_data) #If it passes, add our graph data to index.html
+    return render_template('pdp.html',
+                           graph_data=graph_data,
+                           similarity_data=similarity_data)
 
 
-@app.route('/kde/', methods=['GET', 'POST'])       #Our main loop
+@app.route('/kde/', methods=['GET', 'POST'])  # App route for the KDE page
 def kde_page():
-    graph_data = None                               #Set up a place for our eventual graph data
+    graph_data = None  # Set up a place for our eventual graph data
     similarity_data = None
-    if request.method == 'POST':                    #If the front end sends us information...
-        if 'file' not in request.files:             #Check if it sent us a file
-            flash('No file part')                   #If not, say so.
-            return redirect(request.url)            #Reload
+    if request.method == 'POST':  # If the front end sends us information...
+        if 'file' not in request.files:  # Check if it sent us a file
+            flash('No file part')  # If not, say so.
+            return redirect(request.url)  # Reload
 
-        file = request.files['file']                #Otherwise, set file equal to all the files uploaded
+        file = request.files['file']  # Otherwise, set file equal to all the files uploaded
 
-        if file.filename == '':                     #If the filename is blank,
-            flash('No selected file')               #Say so
-            return redirect(request.url)            #And reload
+        if file.filename == '':  # If the filename is blank,
+            flash('No selected file')  # Say so
+            return redirect(request.url)  # And reload
 
-        if file and files.allowed_file(file.filename):    #If we got a file AND it is allowed,
-            try:                                    #Let's try to...
+        if file and files.allowed_file(file.filename):  # If we got a file AND it is allowed,
+            try:  # Let's try to...
                 all_data = files.read_excel(file)
                 all_data.reverse()
                 filename = SECRET_KEY + 'all_data.pkl'
                 filepath = os.path.join(app.config['DATA_FOLDER'], filename)
                 files.save_data_to_file(all_data, filepath)
                 graph_data = pdp.plot_pdp(all_data)
-            except ValueError as e:                 #If it fails,
-                flash(str(e))                       #Send an error
-                print(f"{e}")
-                return redirect(request.url)        #Reload
+            except ValueError as e:  # If it fails,
+                flash(str(e))  # Send an error
+                print(f"{e}")  # Print it in the console
+                return redirect(request.url)  # Reload
 
-    return render_template('kde.html', graph_data=graph_data, excel_data=similarity_data) #If it passes, add our graph data to index.html
+    return render_template('kde.html',
+                           graph_data=graph_data,
+                           excel_data=similarity_data)  # If it passes, add our graph data to index.html
 
 
 @app.route("/download_cdf", methods=["GET"])
 def download_cdf():
-    return downloads.download_plot(files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'], SECRET_KEY+"all_data.pkl")), 'cdf')  # Assuming there is a generic function for downloading plots
+    return downloads.download_plot(files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'],
+                                                                          SECRET_KEY + "all_data.pkl")),
+                                   plot_type='cdf')
 
 
 @app.route('/download_pdp', methods=['GET'])
 def download_pdp():
-    return downloads.download_plot(files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'], SECRET_KEY+"all_data.pkl")), 'pdp')  # Assuming there is a generic function for downloading plots
+    return downloads.download_plot(files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'],
+                                                                          SECRET_KEY + "all_data.pkl")),
+                                   plot_type='pdp')
+
 
 @app.route('/download_kde', methods=['GET'])
 def download_kde():
-    return downloads.download_plot(files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'], SECRET_KEY+"all_data.pkl")), 'kde')  # Replace with an appropriate function for downloading KDE plots
+    return downloads.download_plot(files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'],
+                                                                          SECRET_KEY + "all_data.pkl")),
+                                   plot_type='kde')
 
 
 @app.route('/download_excel')
 def download_excel():
-    # Replace this with your logic to generate or fetch dynamic data
-    # For demonstration purposes, an example of y-value arrays is provided
-    all_data = files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'], SECRET_KEY+"all_data.pkl"))
+    matrix_type = request.args.get('matrix_type', "similarity")
+    all_data = files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'], SECRET_KEY + "all_data.pkl"))
     y_value_arrays = kde.get_y_values(all_data)
-
-    # Generate Excel data
+    y_value_arrays.reverse()
     row_labels = kde.get_headers(all_data)
-    row_labels.reverse()
-    col_labels = kde.get_headers(all_data)
-    excel_data = files.generate_excel_data(y_value_arrays, row_labels=row_labels, col_labels=col_labels)
 
-    # Create an Excel writer and save the DataFrame to Excel in-memory
+    col_labels = kde.get_headers(all_data)
+    col_labels.reverse()
+    excel_data = files.generate_matrix(y_value_arrays,
+                                       row_labels=row_labels,
+                                       col_labels=col_labels,
+                                       matrix_type=matrix_type)
+
     excel_buffer = BytesIO()
 
-    # Determine the desired format from the request
     download_format = request.args.get('format', 'xlsx')
 
     if download_format == 'xlsx':
         excel_data.to_excel(excel_buffer, index=True, engine='openpyxl', header=True)
         mimetype = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-        download_name = 'similarity_scores.xlsx'
+        download_name = f'{matrix_type}_scores.xlsx'
     elif download_format == 'xls':
         excel_data.to_excel(excel_buffer, index=True, engine='xlwt', header=True)
         mimetype = 'application/vnd.ms-excel'
-        download_name = 'similarity_scores.xls'
+        download_name = f'{matrix_type}_scores.xls'
     elif download_format == 'csv':
         excel_data.to_csv(excel_buffer, index=True, header=True)
         mimetype = 'text/csv'
-        download_name = 'similarity_scores.csv'
+        download_name = f'{matrix_type}_scores.csv'
     else:
         return "Invalid format specified", 400
 
     excel_buffer.seek(0)
 
-    # Serve the in-memory Excel file for download
     return send_file(
         excel_buffer,
         as_attachment=True,
@@ -213,21 +250,17 @@ def cleanup_job():
             print(f"Deleted: {filename}")
 
 
-schedule.every().hour.do(cleanup_job)
-
-
-# Start the scheduler in a separate thread
 def run_scheduler():
     while True:
         schedule.run_pending()
         time.sleep(1)
 
 
-# Start the scheduler in a separate thread
+# Start the data cleanup scheduler in a separate thread
+schedule.every().hour.do(cleanup_job)
 schedule_thread = threading.Thread(target=run_scheduler)
 schedule_thread.start()
 
-
-if __name__ == '__main__':                                      #If we are the program being called,
+if __name__ == '__main__':
     cleanup_job()
-    app.run(port=8000, debug=True)                              #Then run on port 8000 in debugging mode.
+    app.run(port=8000, debug=True)
