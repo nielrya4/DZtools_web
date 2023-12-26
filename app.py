@@ -29,20 +29,37 @@ def main():
 
 @app.route('/dz_stats/', methods=['GET', 'POST'])
 def dz_stats():
+    kde_bandwidth = request.form.get("kde_bandwidth", 10)
     graph_data, cdf_data, similarity_data, likeness_data, ks_data, kuiper_data, cross_correlation_data \
         = None, None, None, None, None, None, None
-    kde_bandwidth = 10
+    kde_graph, cdf_graph = "true", "true"
+    similarity_matrix, likeness_matrix, ks_matrix, kuiper_matrix, cross_correlation_matrix \
+        = None, None, None, None, None
     if request.method == 'POST':
         if 'file' not in request.files:
             print('Incomplete form submission')
             return redirect(request.url)
         kde_bandwidth = int(request.form['kde_bandwidth'])
+
+        kde_graph = "true" if request.form.get('kde_graph') == "true" else "false"
+        cdf_graph = "true" if request.form.get('cdf_graph') == "true" else "false"
+
+        similarity_matrix = "true" if request.form.get('similarity_matrix') == "true" else "false"
+        likeness_matrix = "true" if request.form.get('likeness_matrix') == "true" else "false"
+        ks_matrix = "true" if request.form.get('ks_matrix') == "true" else "false"
+        kuiper_matrix = "true" if request.form.get('kuiper_matrix') == "true" else "false"
+        cross_correlation_matrix = "true" if request.form.get('cross_correlation_matrix') == "true" else "false"
+
         file = request.files['file']
         if file.filename == '':
             flash('No selected file')
             return redirect(request.url)
         if file and files.allowed_file(file.filename):
             try:
+                filename = SECRET_KEY + 'uploaded_file.pkl'
+                filepath = os.path.join(app.config['DATA_FOLDER'], filename)
+                files.save_data_to_file(file.filename, filepath)
+
                 all_data = files.read_excel(file)
                 for i in range(0, len(all_data)):
                     for j in range(0, len(all_data[i][2])):
@@ -53,33 +70,37 @@ def dz_stats():
                 filepath = os.path.join(app.config['DATA_FOLDER'], filename)
                 files.save_data_to_file(all_data, filepath)
 
-                graph_data = kde.plot_kde_unido(all_data)
-                cdf_data = cdf.plot_cdf(all_data)
+                graph_data = kde.plot_kde_unido(all_data) if kde_graph == "true" else None
+                cdf_data = cdf.plot_cdf(all_data) if cdf_graph == "true" else None
 
                 row_labels = kde.get_headers(all_data)
                 col_labels = kde.get_headers(all_data)
                 col_labels.reverse()
-
-                similarity_data = files.generate_matrix(kde.get_y_values(all_data),
-                                                        row_labels=row_labels,
-                                                        col_labels=col_labels,
-                                                        matrix_type="similarity")
-                likeness_data = files.generate_matrix(kde.get_y_values(all_data),
-                                                      row_labels=row_labels,
-                                                      col_labels=col_labels,
-                                                      matrix_type="likeness")
-                ks_data = files.generate_matrix(kde.get_y_values(all_data),
-                                                row_labels=row_labels,
-                                                col_labels=col_labels,
-                                                matrix_type="ks")
-                kuiper_data = files.generate_matrix(kde.get_y_values(all_data),
+                if similarity_matrix == "true":
+                    similarity_data = files.generate_matrix(kde.get_y_values(all_data),
+                                                            row_labels=row_labels,
+                                                            col_labels=col_labels,
+                                                            matrix_type="similarity")
+                if likeness_matrix == "true":
+                    likeness_data = files.generate_matrix(kde.get_y_values(all_data),
+                                                          row_labels=row_labels,
+                                                          col_labels=col_labels,
+                                                          matrix_type="likeness")
+                if ks_matrix == "true":
+                    ks_data = files.generate_matrix(kde.get_y_values(all_data),
                                                     row_labels=row_labels,
                                                     col_labels=col_labels,
-                                                    matrix_type="kuiper")
-                cross_correlation_data = files.generate_matrix(kde.get_y_values(all_data),
-                                                               row_labels=row_labels,
-                                                               col_labels=col_labels,
-                                                               matrix_type="cross_correlation")
+                                                    matrix_type="ks")
+                if kuiper_matrix == "true":
+                    kuiper_data = files.generate_matrix(kde.get_y_values(all_data),
+                                                        row_labels=row_labels,
+                                                        col_labels=col_labels,
+                                                        matrix_type="kuiper")
+                if cross_correlation_matrix == "true":
+                    cross_correlation_data = files.generate_matrix(kde.get_y_values(all_data),
+                                                                   row_labels=row_labels,
+                                                                   col_labels=col_labels,
+                                                                   matrix_type="cross_correlation")
             except ValueError as e:
                 flash(str(e))
                 print(f"{e}")
@@ -92,7 +113,14 @@ def dz_stats():
                            likeness_data=likeness_data,
                            ks_data=ks_data,
                            kuiper_data=kuiper_data,
-                           cross_correlation_data=cross_correlation_data)
+                           cross_correlation_data=cross_correlation_data,
+                           kde_graph=kde_graph,
+                           cdf_graph=cdf_graph,
+                           similarity_matrix=similarity_matrix,
+                           likeness_matrix=likeness_matrix,
+                           ks_matrix=ks_matrix,
+                           kuiper_matrix=kuiper_matrix,
+                           cross_correlation_matrix=cross_correlation_matrix)
 
 
 @app.route('/pdp/', methods=['GET', 'POST'])  # App route for the PDP page

@@ -49,15 +49,26 @@
                     <div class="row">
                         <div class="col-md-4 mt-2">
                             <label>Bandwidth: </label>
-                            <label><input type="text" name="kde_bandwidth" value="10"></label>
+                            <label><input type="text" name="kde_bandwidth" value="{{ kde_bandwidth }}"></label>
                         </div>
+                    </div>
+                    <div class="row">
+                        <label>Select Graphs:</label>
+                        <label><input type="checkbox" name="kde_graph" value="true" {% if kde_graph == "true" %}checked{% endif %}> KDE Graph</label>
+                        <label><input type="checkbox" name="cdf_graph" value="true" {% if cdf_graph == "true" %}checked{% endif %}> CDF Graph</label>
+                        <label>Select Matrices:</label>
+                        <label><input type="checkbox" name="similarity_matrix" value="true" {% if similarity_matrix == "true" %}checked{% endif %}> Similarity Matrix</label>
+                        <label><input type="checkbox" name="likeness_matrix" value="true" {% if likeness_matrix == "true" %}checked{% endif %}> Likeness Matrix</label>
+                        <label><input type="checkbox" name="ks_matrix" value="true" {% if ks_matrix == "true" %}checked{% endif %}> KS Matrix</label>
+                        <label><input type="checkbox" name="kuiper_matrix" value="true" {% if kuiper_matrix == "true" %}checked{% endif %}> Kuiper Matrix</label>
+                        <label><input type="checkbox" name="cross_correlation_matrix" value="true" {% if cross_correlation_matrix == "true" %}checked{% endif %}> Cross-Correlation Matrix</label>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Upload and Plot</button>
             </form>
         </div>
         <div class="col-md-9">
-            {% if graph_data %}
+            {% if graph_data  and kde_graph == "true" %}
             <div class="text-left">
                 <div>{{ graph_data|safe }}</div>
                 <div class="mt-3">
@@ -74,10 +85,11 @@
                     </div>
                 </div>
             </div>
+            <br />
+            <br />
             {% endif %}
-            <br />
-            <br />
-            {% if cdf_data %}
+
+            {% if cdf_data and cdf_graph == "true" %}
                 <div class="text-left">
                     <div>{{ cdf_data|safe }}</div>
                         <div class="mt-3">
@@ -95,10 +107,10 @@
                         </div>
                     </div>
                 </div>
+                <br />
+                <br />
             {% endif %}
-            <br />
-            <br />
-            {% if similarity_data is not none %}
+            {% if similarity_data is not none and similarity_matrix == "true"%}
                 <h3>Similarity Matrix</h3>
                 {{ similarity_data.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')|safe }}
                 <div class="col-md-3">
@@ -115,10 +127,10 @@
                         </div>
                     </div>
                 </div>
+                <br />
+                <br />
             {% endif %}
-            <br />
-            <br />
-            {% if likeness_data is not none %}
+            {% if likeness_data is not none and likeness_matrix == "true"%}
                 <h3>Likeness Matrix</h3>
                 {{ likeness_data.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')|safe }}
                 <div class="col-md-3">
@@ -135,10 +147,10 @@
                         </div>
                     </div>
                 </div>
+                <br />
+                <br />
             {% endif %}
-            <br />
-            <br />
-            {% if ks_data is not none %}
+            {% if ks_data is not none and ks_matrix == "true" %}
                 <h3>KS Test Matrix</h3>
                 {{ ks_data.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')|safe }}
                 <div class="col-md-3">
@@ -155,10 +167,10 @@
                         </div>
                     </div>
                 </div>
+                <br />
+                <br />
             {% endif %}
-            <br />
-            <br />
-            {% if kuiper_data is not none %}
+            {% if kuiper_data is not none and kuiper_matrix == "true"%}
                 <h3>Kuiper Test Matrix</h3>
                 {{ kuiper_data.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')|safe }}
                 <div class="col-md-3">
@@ -175,10 +187,10 @@
                         </div>
                     </div>
                 </div>
+                <br />
+                <br />
             {% endif %}
-            <br />
-            <br />
-            {% if cross_correlation_data is not none %}
+            {% if cross_correlation_data is not none and cross_correlation_matrix == "true"%}
                 <h3>Cross-Correlation Matrix</h3>
                 {{ cross_correlation_data.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')|safe }}
                 <div class="col-md-3">
@@ -195,10 +207,10 @@
                         </div>
                     </div>
                 </div>
+                <br />
+                <br />
             {% endif %}
         </div>
-    <br />
-    <br />
     <script>
       // Adjust the navbar width based on the content width
       function adjustNavbarWidth() {
