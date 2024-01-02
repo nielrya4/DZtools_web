@@ -1,4 +1,1 @@
-PDP deals with sigma & KDE deals with bandwidth
-    Refactor variables appropriately
-
-Either keep filename persistent across sessions or direct the user to pick a file before checking the boxes
+Either keep filename persistent across sessions or direct the user to pick a file before checking the boxes or store whole file for easy re-plotting

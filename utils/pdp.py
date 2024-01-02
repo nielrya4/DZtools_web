@@ -5,7 +5,7 @@ from utils import format
 from flask import (request, redirect)
 
 
-def probability_density_plot(data, sigma, nsteps=1000):
+def pdp_function(data, sigma, nsteps=1000):
     data = format.trim_none(data)
     sigma = format.trim_none(sigma)
     x = np.linspace((min(min(row) for row in data)) - (2 * max(max(row) for row in sigma)),
@@ -40,7 +40,7 @@ def plot_pdp(all_data):
         # If there's only one subplot, axes will be a 2D numpy array, so use axes[0] instead of axes[i]
         for i, data_set in enumerate(all_data):
             header, data, sigma = data_set[0], data_set[1], data_set[2]
-            x, y = probability_density_plot(data, sigma)  # Calculate the (x,y) points from our data and uncertainty
+            x, y = pdp_function(data, sigma)  # Calculate the (x,y) points from our data and uncertainty
 
             if subplots == 1:
                 axes[0, 0].plot(x, y, label=header)
@@ -63,7 +63,7 @@ def get_y_values(all_data):
         all_data.reverse()
         for i, data_set in enumerate(all_data):
             header, data, sigma = data_set[0], data_set[1], data_set[2]
-            x, y = probability_density_plot(data, sigma)  # Calculate the (x,y) points from our data and uncertainty
+            x, y = pdp_function(data, sigma)  # Calculate the (x,y) points from our data and uncertainty
             all_y_values.append(y)
     except ValueError as e:  # If it fails,
         print(f"{e}")

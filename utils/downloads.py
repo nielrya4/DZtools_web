@@ -37,7 +37,7 @@ def download_pdp_from_data(all_data, format, filename):
     # If there's only one subplot, axes will be a 2D numpy array, so use axes[0] instead of axes[i]
     for i, data_set in enumerate(all_data):
         header, data, sigma = data_set[0], data_set[1], data_set[2]
-        x, y = pdp.probability_density_plot(data, sigma)  # Calculate the (x,y) points from our data and uncertainty
+        x, y = pdp.pdp_function(data, sigma)  # Calculate the (x,y) points from our data and uncertainty
 
         if subplots == 1:
             axes[0, 0].plot(x, y, label=header)
@@ -74,7 +74,7 @@ def download_kde_from_data(all_data, format, filename):
     sigma = []
     for i, data_set in enumerate(all_data):
         header, data, sigma = data_set[0], data_set[1], data_set[2]
-        x, y = kde.kernel_density_estimate(data, sigma)  # Calculate the (x,y) points from our data and uncertainty
+        x, y = kde.kde_function(data, sigma)  # Calculate the (x,y) points from our data and uncertainty
         ax.plot(x, y, label=header)
 
     # Add title and labels

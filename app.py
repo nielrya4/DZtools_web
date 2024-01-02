@@ -30,25 +30,28 @@ def main():
 @app.route('/dz_stats/', methods=['GET', 'POST'])
 def dz_stats():
     kde_bandwidth = request.form.get("kde_bandwidth", 10)
+    kde_stacked = False
     graph_data, cdf_data, similarity_data, likeness_data, ks_data, kuiper_data, cross_correlation_data \
         = None, None, None, None, None, None, None
-    kde_graph, cdf_graph = "true", "true"
+    kde_graph, cdf_graph = True, True
     similarity_matrix, likeness_matrix, ks_matrix, kuiper_matrix, cross_correlation_matrix \
         = None, None, None, None, None
     if request.method == 'POST':
         if 'file' not in request.files:
             print('Incomplete form submission')
             return redirect(request.url)
+
         kde_bandwidth = int(request.form['kde_bandwidth'])
+        kde_stacked = True if request.form.get('kde_stacked') == "true" else False
+        kde_graph = True if request.form.get('kde_graph') == "true" else False
 
-        kde_graph = "true" if request.form.get('kde_graph') == "true" else "false"
-        cdf_graph = "true" if request.form.get('cdf_graph') == "true" else "false"
+        cdf_graph = True if request.form.get('cdf_graph') == "true" else False
 
-        similarity_matrix = "true" if request.form.get('similarity_matrix') == "true" else "false"
-        likeness_matrix = "true" if request.form.get('likeness_matrix') == "true" else "false"
-        ks_matrix = "true" if request.form.get('ks_matrix') == "true" else "false"
-        kuiper_matrix = "true" if request.form.get('kuiper_matrix') == "true" else "false"
-        cross_correlation_matrix = "true" if request.form.get('cross_correlation_matrix') == "true" else "false"
+        similarity_matrix = True if request.form.get('similarity_matrix') == "true" else False
+        likeness_matrix = True if request.form.get('likeness_matrix') == "true" else False
+        ks_matrix = True if request.form.get('ks_matrix') == "true" else False
+        kuiper_matrix = True if request.form.get('kuiper_matrix') == "true" else False
+        cross_correlation_matrix = True if request.form.get('cross_correlation_matrix') == "true" else False
 
         file = request.files['file']
         if file.filename == '':
@@ -61,42 +64,40 @@ def dz_stats():
                 files.save_data_to_file(file.filename, filepath)
 
                 all_data = files.read_excel(file)
-                for i in range(0, len(all_data)):
-                    for j in range(0, len(all_data[i][2])):
-                        all_data[i][2][j] = (kde_bandwidth,)
+                all_data = kde.replace_bandwidth(all_data, bandwidth=kde_bandwidth)
                 all_data.reverse()
                 # Save data to the file system
                 filename = SECRET_KEY + 'all_data.pkl'
                 filepath = os.path.join(app.config['DATA_FOLDER'], filename)
                 files.save_data_to_file(all_data, filepath)
 
-                graph_data = kde.plot_kde_unido(all_data) if kde_graph == "true" else None
-                cdf_data = cdf.plot_cdf(all_data) if cdf_graph == "true" else None
+                graph_data = kde.kde_plot(all_data, stacked=kde_stacked) if kde_graph else None
+                cdf_data = cdf.plot_cdf(all_data) if cdf_graph else None
 
                 row_labels = kde.get_headers(all_data)
                 col_labels = kde.get_headers(all_data)
                 col_labels.reverse()
-                if similarity_matrix == "true":
+                if similarity_matrix:
                     similarity_data = files.generate_matrix(kde.get_y_values(all_data),
                                                             row_labels=row_labels,
                                                             col_labels=col_labels,
                                                             matrix_type="similarity")
-                if likeness_matrix == "true":
+                if likeness_matrix:
                     likeness_data = files.generate_matrix(kde.get_y_values(all_data),
                                                           row_labels=row_labels,
                                                           col_labels=col_labels,
                                                           matrix_type="likeness")
-                if ks_matrix == "true":
+                if ks_matrix:
                     ks_data = files.generate_matrix(kde.get_y_values(all_data),
                                                     row_labels=row_labels,
                                                     col_labels=col_labels,
                                                     matrix_type="ks")
-                if kuiper_matrix == "true":
+                if kuiper_matrix:
                     kuiper_data = files.generate_matrix(kde.get_y_values(all_data),
                                                         row_labels=row_labels,
                                                         col_labels=col_labels,
                                                         matrix_type="kuiper")
-                if cross_correlation_matrix == "true":
+                if cross_correlation_matrix:
                     cross_correlation_data = files.generate_matrix(kde.get_y_values(all_data),
                                                                    row_labels=row_labels,
                                                                    col_labels=col_labels,
@@ -120,7 +121,8 @@ def dz_stats():
                            likeness_matrix=likeness_matrix,
                            ks_matrix=ks_matrix,
                            kuiper_matrix=kuiper_matrix,
-                           cross_correlation_matrix=cross_correlation_matrix)
+                           cross_correlation_matrix=cross_correlation_matrix,
+                           kde_stacked=kde_stacked)
 
 
 @app.route('/pdp/', methods=['GET', 'POST'])  # App route for the PDP page
@@ -164,30 +166,30 @@ def pdp_page():
 
 @app.route('/kde/', methods=['GET', 'POST'])  # App route for the KDE page
 def kde_page():
-    graph_data = None  # Set up a place for our eventual graph data
+    graph_data = None
     similarity_data = None
-    if request.method == 'POST':  # If the front end sends us information...
-        if 'file' not in request.files:  # Check if it sent us a file
-            flash('No file part')  # If not, say so.
-            return redirect(request.url)  # Reload
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
 
-        file = request.files['file']  # Otherwise, set file equal to all the files uploaded
+        file = request.files['file']
 
-        if file.filename == '':  # If the filename is blank,
-            flash('No selected file')  # Say so
-            return redirect(request.url)  # And reload
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
 
-        if file and files.allowed_file(file.filename):  # If we got a file AND it is allowed,
-            try:  # Let's try to...
+        if file and files.allowed_file(file.filename):
+            try:
                 all_data = files.read_excel(file)
                 all_data.reverse()
                 filename = SECRET_KEY + 'all_data.pkl'
                 filepath = os.path.join(app.config['DATA_FOLDER'], filename)
                 files.save_data_to_file(all_data, filepath)
-                graph_data = pdp.plot_pdp(all_data)
-            except ValueError as e:  # If it fails,
-                flash(str(e))  # Send an error
-                print(f"{e}")  # Print it in the console
+                graph_data = kde.kde_plot(all_data, stacked=True)
+            except ValueError as e:
+                flash(str(e))
+                print(f"Error on KDE page: {e}")
                 return redirect(request.url)  # Reload
 
     return render_template('kde.html',
@@ -197,23 +199,26 @@ def kde_page():
 
 @app.route("/download_cdf", methods=["GET"])
 def download_cdf():
-    return downloads.download_plot(files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'],
-                                                                          SECRET_KEY + "all_data.pkl")),
-                                   plot_type='cdf')
+    return downloads.download_plot(
+        files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'],
+                                               SECRET_KEY + "all_data.pkl")),
+        plot_type='cdf')
 
 
 @app.route('/download_pdp', methods=['GET'])
 def download_pdp():
-    return downloads.download_plot(files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'],
-                                                                          SECRET_KEY + "all_data.pkl")),
-                                   plot_type='pdp')
+    return downloads.download_plot(
+        files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'],
+                                               SECRET_KEY + "all_data.pkl")),
+        plot_type='pdp')
 
 
 @app.route('/download_kde', methods=['GET'])
 def download_kde():
-    return downloads.download_plot(files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'],
-                                                                          SECRET_KEY + "all_data.pkl")),
-                                   plot_type='kde')
+    return downloads.download_plot(
+        files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'],
+                                               SECRET_KEY + "all_data.pkl")),
+        plot_type='kde')
 
 
 @app.route('/download_excel')
@@ -264,11 +269,12 @@ def download_excel():
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'static/DZ.ico', mimetype='image/vnd.microsoft.icon')
+
+
 @app.route('/menu.ico')
 def menu_icon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'static/menu.ico', mimetype='image/vnd.microsoft.icon')
-
 
 
 # Cleaning up data folder-----------------------------------------------------------------------------------------------
