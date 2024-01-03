@@ -59,9 +59,8 @@ def dz_stats():
             return redirect(request.url)
         if file and files.allowed_file(file.filename):
             try:
-                filename = SECRET_KEY + 'uploaded_file.pkl'
-                filepath = os.path.join(app.config['DATA_FOLDER'], filename)
-                files.save_data_to_file(file.filename, filepath)
+                ext = files.get_extension(file)
+                files.upload_file(file)
 
                 all_data = files.read_excel(file)
                 all_data = kde.replace_bandwidth(all_data, bandwidth=kde_bandwidth)
@@ -281,12 +280,16 @@ def menu_icon():
 
 
 def cleanup_job():
-    print("Cleaning up .pkl files...")
+    print("Cleaning up files in data folder...")
     for filename in os.listdir(app.config['DATA_FOLDER']):
-        if filename.endswith(".pkl"):
-            filepath = os.path.join(app.config['DATA_FOLDER'], filename)
-            os.remove(filepath)
-            print(f"Deleted: {filename}")
+        filepath = os.path.join(app.config['DATA_FOLDER'], filename)
+        os.remove(filepath)
+        print(f"Deleted: {filename}")
+    print("Cleaning up files in upload folder...")
+    for filename in os.listdir(app.config['UPLOAD_FOLDER']):
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        os.remove(filepath)
+        print(f"Deleted: {filename}")
 
 
 def run_scheduler():

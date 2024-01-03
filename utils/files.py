@@ -5,6 +5,7 @@ import os
 import app
 from utils import format, measures
 import pickle
+from werkzeug.utils import secure_filename
 
 ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
 
@@ -26,9 +27,16 @@ def read_excel(file):
         for col in range(1, num_cols + 1, 2):
             if sheet.cell(row=1, column=col).value is not None:
                 header = f"{sheet.cell(row=1, column=col).value}"
-                data = format.trim_none([value for value in sheet.iter_rows(min_col=col, max_col=col, min_row=2, values_only=True)])
-                sigma = format.trim_none([value for value in sheet.iter_rows(min_col=col + 1, max_col=col + 1, min_row=2, values_only=True)])
-                data_set = [header, data, sigma]
+                data = format.trim_none([value for value in sheet.iter_rows(min_col=col,
+                                                                            max_col=col,
+                                                                            min_row=2,
+                                                                            values_only=True)])
+
+                bandwidth = format.trim_none([value for value in sheet.iter_rows(min_col=col + 1,
+                                                                                 max_col=col + 1,
+                                                                                 min_row=2,
+                                                                                 values_only=True)])
+                data_set = [header, data, bandwidth]
                 all_data.append(data_set)
 
     except Exception as e:
@@ -83,7 +91,23 @@ def save_data_to_file(data, filepath):
         pickle.dump(data, file)
 
 
-# Example of reading data from a file
 def read_data_from_file(filepath):
     with open(filepath, 'rb') as file:
         return pickle.load(file)
+
+
+def get_extension(file):
+    if file.filename == '':
+        return None  # No file selected
+    filename = secure_filename(file.filename)
+    return filename.rsplit('.', 1)[1].lower() if '.' in filename else None
+
+
+def upload_file(file):
+    if file and allowed_file(file.filename):
+        ext = get_extension(file)
+        file_path = os.path.join(app.UPLOAD_FOLDER, app.SECRET_KEY + f"upload.{ext}")
+        file.save(file_path)
+        return file_path
+    else:
+        return None
