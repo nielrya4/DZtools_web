@@ -1,7 +1,9 @@
 import os, secrets, schedule, threading, time
 from io import BytesIO
+from datetime import datetime, timedelta
 from utils import downloads, files, pdp, cdf, kde
-from flask import Flask, render_template, request, redirect, flash, send_from_directory, send_file
+from applications.dz_stats import display
+from flask import Flask, render_template, request, redirect, flash, send_from_directory, send_file, session, jsonify
 
 UPLOAD_FOLDER = 'uploads'
 DATA_FOLDER = 'data'
@@ -29,99 +31,71 @@ def main():
 
 @app.route('/dz_stats/', methods=['GET', 'POST'])
 def dz_stats():
-    kde_bandwidth = request.form.get("kde_bandwidth", 10)
-    kde_stacked = False
-    graph_data, cdf_data, similarity_data, likeness_data, ks_data, kuiper_data, cross_correlation_data \
-        = None, None, None, None, None, None, None
-    kde_graph, cdf_graph = True, True
-    similarity_matrix, likeness_matrix, ks_matrix, kuiper_matrix, cross_correlation_matrix \
-        = None, None, None, None, None
+    # Set defaults to render the page
+    results = render_template("dz_stats.html",
+                              kde_bandwidth=10,
+                              kde_graph=True,
+                              cdf_graph=True)
+
     if request.method == 'POST':
-        if 'file' not in request.files:
-            print('Incomplete form submission')
+        file = request.files.get('file')
+
+        if not file and 'last_uploaded_file' not in session:
+            flash('No file provided in the form, and no last uploaded file in the session.', 'error')
+            session['display_alert'] = True  # Set a session flag to display the alert
             return redirect(request.url)
 
-        kde_bandwidth = int(request.form['kde_bandwidth'])
-        kde_stacked = True if request.form.get('kde_stacked') == "true" else False
-        kde_graph = True if request.form.get('kde_graph') == "true" else False
+        try:
+            kde_bandwidth = int(request.form.get('kde_bandwidth', 10))
+            kde_stacked = request.form.get('kde_stacked') == "true"
+            kde_graph = request.form.get('kde_graph') == "true"
+            cdf_graph = request.form.get('cdf_graph') == "true"
 
-        cdf_graph = True if request.form.get('cdf_graph') == "true" else False
+            similarity_matrix = request.form.get('similarity_matrix') == "true"
+            likeness_matrix = request.form.get('likeness_matrix') == "true"
+            ks_matrix = request.form.get('ks_matrix') == "true"
+            kuiper_matrix = request.form.get('kuiper_matrix') == "true"
+            cross_correlation_matrix = request.form.get('cross_correlation_matrix') == "true"
 
-        similarity_matrix = True if request.form.get('similarity_matrix') == "true" else False
-        likeness_matrix = True if request.form.get('likeness_matrix') == "true" else False
-        ks_matrix = True if request.form.get('ks_matrix') == "true" else False
-        kuiper_matrix = True if request.form.get('kuiper_matrix') == "true" else False
-        cross_correlation_matrix = True if request.form.get('cross_correlation_matrix') == "true" else False
+            session_key = session.get('SECRET_KEY', SECRET_KEY)
 
-        file = request.files['file']
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and files.allowed_file(file.filename):
-            try:
-                ext = files.get_extension(file)
-                files.upload_file(file)
+            if file:
+                # File provided in the form
+                uploaded_file = files.upload_file(file, session_key)
+                session['last_uploaded_file'] = os.path.basename(uploaded_file)
+            else:
+                # No file provided in the form, use the last uploaded file from the session
+                last_uploaded_file = session.get('last_uploaded_file')
+                if last_uploaded_file:
+                    uploaded_file = os.path.join(UPLOAD_FOLDER, last_uploaded_file)
+                else:
+                    flash('No last uploaded file found in the session.')
+                    return redirect(request.url)
 
-                all_data = files.read_excel(file)
-                all_data = kde.replace_bandwidth(all_data, bandwidth=kde_bandwidth)
-                all_data.reverse()
-                # Save data to the file system
-                filename = SECRET_KEY + 'all_data.pkl'
-                filepath = os.path.join(app.config['DATA_FOLDER'], filename)
-                files.save_data_to_file(all_data, filepath)
+            all_data = files.read_excel(uploaded_file)
+            all_data = kde.replace_bandwidth(all_data, bandwidth=kde_bandwidth)
+            all_data.reverse()
 
-                graph_data = kde.kde_plot(all_data, stacked=kde_stacked) if kde_graph else None
-                cdf_data = cdf.plot_cdf(all_data) if cdf_graph else None
+            # Save data to the file system
+            filename = f"{session_key}_all_data.pkl"
+            filepath = os.path.join(app.config['DATA_FOLDER'], filename)
+            files.save_data_to_file(all_data, filepath)
 
-                row_labels = kde.get_headers(all_data)
-                col_labels = kde.get_headers(all_data)
-                col_labels.reverse()
-                if similarity_matrix:
-                    similarity_data = files.generate_matrix(kde.get_y_values(all_data),
-                                                            row_labels=row_labels,
-                                                            col_labels=col_labels,
-                                                            matrix_type="similarity")
-                if likeness_matrix:
-                    likeness_data = files.generate_matrix(kde.get_y_values(all_data),
-                                                          row_labels=row_labels,
-                                                          col_labels=col_labels,
-                                                          matrix_type="likeness")
-                if ks_matrix:
-                    ks_data = files.generate_matrix(kde.get_y_values(all_data),
-                                                    row_labels=row_labels,
-                                                    col_labels=col_labels,
-                                                    matrix_type="ks")
-                if kuiper_matrix:
-                    kuiper_data = files.generate_matrix(kde.get_y_values(all_data),
-                                                        row_labels=row_labels,
-                                                        col_labels=col_labels,
-                                                        matrix_type="kuiper")
-                if cross_correlation_matrix:
-                    cross_correlation_data = files.generate_matrix(kde.get_y_values(all_data),
-                                                                   row_labels=row_labels,
-                                                                   col_labels=col_labels,
-                                                                   matrix_type="cross_correlation")
-            except ValueError as e:
-                flash(str(e))
-                print(f"{e}")
-                return redirect(request.url)
-    return render_template('dz_stats.html',
-                           graph_data=graph_data,
-                           kde_bandwidth=kde_bandwidth,
-                           cdf_data=cdf_data,
-                           similarity_data=similarity_data,
-                           likeness_data=likeness_data,
-                           ks_data=ks_data,
-                           kuiper_data=kuiper_data,
-                           cross_correlation_data=cross_correlation_data,
-                           kde_graph=kde_graph,
-                           cdf_graph=cdf_graph,
-                           similarity_matrix=similarity_matrix,
-                           likeness_matrix=likeness_matrix,
-                           ks_matrix=ks_matrix,
-                           kuiper_matrix=kuiper_matrix,
-                           cross_correlation_matrix=cross_correlation_matrix,
-                           kde_stacked=kde_stacked)
+            results = display(all_data,
+                              kde_graph=kde_graph,
+                              kde_stacked=kde_stacked,
+                              cdf_graph=cdf_graph,
+                              similarity_matrix=similarity_matrix,
+                              likeness_matrix=likeness_matrix,
+                              ks_matrix=ks_matrix,
+                              kuiper_matrix=kuiper_matrix,
+                              cross_correlation_matrix=cross_correlation_matrix)
+
+        except ValueError as e:
+            flash(str(e))
+            print(f"{e}")
+
+    return results
 
 
 @app.route('/pdp/', methods=['GET', 'POST'])  # App route for the PDP page
@@ -281,15 +255,22 @@ def menu_icon():
 
 def cleanup_job():
     print("Cleaning up files in data folder...")
-    for filename in os.listdir(app.config['DATA_FOLDER']):
-        filepath = os.path.join(app.config['DATA_FOLDER'], filename)
-        os.remove(filepath)
-        print(f"Deleted: {filename}")
+    cleanup_folder(app.config['DATA_FOLDER'])
     print("Cleaning up files in upload folder...")
-    for filename in os.listdir(app.config['UPLOAD_FOLDER']):
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        os.remove(filepath)
-        print(f"Deleted: {filename}")
+    cleanup_folder(app.config['UPLOAD_FOLDER'])
+
+
+def cleanup_folder(folder_path):
+    current_time = datetime.now()
+    twenty_four_hours_ago = current_time - timedelta(hours=24)
+
+    for filename in os.listdir(folder_path):
+        filepath = os.path.join(folder_path, filename)
+        file_creation_time = datetime.fromtimestamp(os.path.getctime(filepath))
+
+        if file_creation_time < twenty_four_hours_ago:
+            os.remove(filepath)
+            print(f"Deleted: {filename}")
 
 
 def run_scheduler():

@@ -103,11 +103,27 @@ def get_extension(file):
     return filename.rsplit('.', 1)[1].lower() if '.' in filename else None
 
 
-def upload_file(file):
-    if file and allowed_file(file.filename):
-        ext = get_extension(file)
-        file_path = os.path.join(app.UPLOAD_FOLDER, app.SECRET_KEY + f"upload.{ext}")
+def upload_file(file, session_key):
+    """Upload a file to the specified folder with the session key in the filename."""
+    if file:
+        filename = f"{session_key}_{secure_filename(file.filename)}"
+        file_path = os.path.join(app.UPLOAD_FOLDER, filename)
         file.save(file_path)
         return file_path
-    else:
+    return None
+
+
+def file_in_folder(folder_path):
+    """Check if there is any file in the given folder."""
+    files = os.listdir(folder_path)
+    return any(os.path.isfile(os.path.join(folder_path, filename)) for filename in files)
+
+
+def get_latest_file(folder_path):
+    """Get the latest file in the given folder based on modification time."""
+    files = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
+    if not files:
         return None
+
+    latest_file = max(files, key=lambda f: os.path.getmtime(os.path.join(folder_path, f)))
+    return os.path.join(folder_path, latest_file)
