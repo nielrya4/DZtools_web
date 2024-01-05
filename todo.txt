@@ -1,4 +1,3 @@
 Long term:
     1. Add users and login
-    2. Add console functionality for dz_stats i.e. "dz_stats -i my_file.xlsx -o graph.svg likeness.xlsx"
-    3. Add Excel spreadsheet editor
+    2. Add Excel spreadsheet editor

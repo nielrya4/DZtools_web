@@ -3,6 +3,7 @@ from io import BytesIO
 from datetime import datetime, timedelta
 from utils import downloads, files, pdp, cdf, kde
 from applications.dz_stats import display
+from applications.cmd import process_cmd
 from flask import Flask, render_template, request, redirect, flash, send_from_directory, send_file, session, jsonify
 
 UPLOAD_FOLDER = 'uploads'
@@ -248,6 +249,21 @@ def favicon():
 def menu_icon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'static/menu.ico', mimetype='image/vnd.microsoft.icon')
+
+
+@app.route('/cmd/', methods=['GET', 'POST'])
+def cmd():
+    output = request.form.get('output', "")
+
+    if request.method == 'POST':
+        command = request.form['command']
+        command = command.strip()
+        result = process_cmd(command)
+        if result.startswith("text "):
+            output = output + f"$ {command}\n" + result[5:] + " \n"
+        elif result.startswith("page "):
+            return result[5:]
+    return render_template('cmd.html', output=output)
 
 
 # Cleaning up data folder-----------------------------------------------------------------------------------------------

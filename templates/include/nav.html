@@ -3,23 +3,26 @@
             <img src="{{ url_for('static', filename='/menu.ico') }}" alt="Menu" class="navbar-toggler-icon">
         </button>
 
-        <a id="dztools-link" href="{{ url_for('main') }}" class="nav-link mt-1 navbar-icon">
+        <a id="dztools-link" href="{{ url_for('main') }}" class="nav-link mt-1 navbar-icon" title="Home">
             <img src="{{ url_for('static', filename='/DZ.ico') }}" alt="DZ.ico">
             DZtools
         </a>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a id="dztools-link" href="{{ url_for('main') }}" class="nav-link usually-hidden">DZtools</a>
+                    <a id="dztools-link" href="{{ url_for('main') }}" class="nav-link usually-hidden" title="Home">DZtools</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/pdp/">PDP Plotter</a>
+                    <a class="nav-link" href="/pdp/" title="Plot a PDP">PDP Plotter</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/kde/">KDE Plotter</a>
+                    <a class="nav-link" href="/kde/" title="Plot a KDE">KDE Plotter</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/dz_stats/">DZstats</a>
+                    <a class="nav-link" href="/dz_stats/" title="Intersample Comparison of DZ Ages">DZstats</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/cmd/" title="Run a Command">DZcmd</a>
                 </li>
             </ul>
         </div>
