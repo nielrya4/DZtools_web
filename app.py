@@ -1,10 +1,10 @@
 import os, secrets, schedule, threading, time
 from io import BytesIO
 from datetime import datetime, timedelta
-from utils import downloads, files, pdp, cdf, kde
-from applications.dz_stats import display
-from applications.cmd import process_cmd
-from flask import Flask, render_template, request, redirect, flash, send_from_directory, send_file, session, jsonify
+from utils import downloads, files, pdp, kde
+import applications
+from applications import cmd
+from flask import Flask, render_template, request, redirect, flash, send_from_directory, send_file, session
 
 UPLOAD_FOLDER = 'uploads'
 DATA_FOLDER = 'data'
@@ -28,6 +28,12 @@ app.config.update(
 @app.route('/')
 def main():
     return render_template('index.html')
+
+
+@app.route('/dz_nmf/', methods=['GET', 'POST'])
+def dz_nmf():
+
+    return render_template("dz_nmf.html")
 
 
 @app.route('/dz_stats/', methods=['GET', 'POST'])
@@ -82,16 +88,15 @@ def dz_stats():
             filepath = os.path.join(app.config['DATA_FOLDER'], filename)
             files.save_data_to_file(all_data, filepath)
 
-            results = display(all_data,
-                              kde_graph=kde_graph,
-                              kde_stacked=kde_stacked,
-                              cdf_graph=cdf_graph,
-                              similarity_matrix=similarity_matrix,
-                              likeness_matrix=likeness_matrix,
-                              ks_matrix=ks_matrix,
-                              kuiper_matrix=kuiper_matrix,
-                              cross_correlation_matrix=cross_correlation_matrix)
-
+            results = applications.dz_stats.display(all_data,
+                                                    kde_graph=kde_graph,
+                                                    kde_stacked=kde_stacked,
+                                                    cdf_graph=cdf_graph,
+                                                    similarity_matrix=similarity_matrix,
+                                                    likeness_matrix=likeness_matrix,
+                                                    ks_matrix=ks_matrix,
+                                                    kuiper_matrix=kuiper_matrix,
+                                                    cross_correlation_matrix=cross_correlation_matrix)
         except ValueError as e:
             flash(str(e))
             print(f"{e}")
@@ -209,9 +214,7 @@ def download_excel():
                                        row_labels=row_labels,
                                        col_labels=col_labels,
                                        matrix_type=matrix_type)
-
     excel_buffer = BytesIO()
-
     download_format = request.args.get('format', 'xlsx')
 
     if download_format == 'xlsx':
@@ -231,12 +234,10 @@ def download_excel():
 
     excel_buffer.seek(0)
 
-    return send_file(
-        excel_buffer,
-        as_attachment=True,
-        download_name=download_name,
-        mimetype=mimetype
-    )
+    return send_file(excel_buffer,
+                     as_attachment=True,
+                     download_name=download_name,
+                     mimetype=mimetype)
 
 
 @app.route('/DZ.ico')
@@ -254,11 +255,10 @@ def menu_icon():
 @app.route('/cmd/', methods=['GET', 'POST'])
 def cmd():
     output = request.form.get('output', "")
-
     if request.method == 'POST':
         command = request.form['command']
         command = command.strip()
-        result = process_cmd(command)
+        result = applications.cmd.process_cmd(command)
         if result.startswith("text "):
             output = output + f"$ {command}\n" + result[5:] + " \n"
         elif result.startswith("page "):

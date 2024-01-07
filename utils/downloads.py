@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from utils import pdp, kde
 
+
 def download_plot(all_data, plot_type):
     format = request.args.get('format', 'png')
 

@@ -2,7 +2,6 @@ from io import BytesIO
 import matplotlib.pyplot as plt
 import numpy as np
 from utils import format
-from flask import (request, redirect)
 
 
 def kde_function(data, bandwidth, num_steps=4000, x_min=0, x_max=4000):
