@@ -38,7 +38,7 @@ def run(args=""):           # Not even close to being finished. This is for term
                     all_data = kde.replace_bandwidth(all_data, bandwidth=kde_bandwidth)
                     all_data.reverse()
                 else:
-                    return render_template(template_name_or_list="cmd.html",
+                    return render_template(template_name_or_list="dz_cmd/dz_cmd.html",
                                            output=request.form.get("output", 0) + "File not found\n")
 
             elif arg == "kde":
@@ -123,7 +123,7 @@ def display(all_data, kde_graph, kde_stacked, cdf_graph, similarity_matrix, like
     else:
         cross_correlation_data = None
 
-    return render_template('dz_stats.html',
+    return render_template('dz_stats/dz_stats.html',
                            graph_data=graph_data,
                            kde_bandwidth=kde_bandwidth,
                            kde_stacked=kde_stacked,

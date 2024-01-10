@@ -1,0 +1,54 @@
+<div class="col-md9">
+    <form method="post" action="/upload_file" enctype="multipart/form-data" id="fileForm" class="mb-4">
+        <div class="mb-3">
+            <div class="row">
+                <label for="file" class="form-label">Choose an Excel file (.xlsx or .xls)</label>
+                <div class="col-md-8">
+                    <input type="file" name="file" class="form-control" id="file" accept=".xlsx, .xls"  {% if not file and 'last_uploaded_file' not in session %} required {% endif %}>
+                </div>
+            </div>
+            <br />
+            <button type="submit" class="btn btn-primary">Upload {% if 'last_uploaded_file' in session %}New{% endif %} File</button>
+        </div>
+    </form>
+    {% if file or 'last_uploaded_file' in session %}
+        <br />
+        <form method="post" action="/dz_stats/" enctype="multipart/form-data" id="fileForm" class="mb-4">
+            <div class="mb-3">
+                <h4 style="color:cyan;">File: {{ session["last_uploaded_file"][33:] }}</h4>
+                <div class="row">
+                    <div class="col-md-4 mt-2">
+                        <label>Bandwidth: </label>
+                        <label><input type="text" name="kde_bandwidth" value="{{ kde_bandwidth }}"></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <label>Select Graphs:</label>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <label><input type="checkbox" name="kde_graph" value="true" {% if kde_graph %}checked{% endif %}> KDE Graph</label>
+                        </div>
+                        <div class="col-md-1" data-stacked-switch>
+                            <div class="form-check form-switch">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="checkbox" name="kde_stacked" value="true" {% if kde_stacked %}checked{% endif %}>
+                                    Stacked
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <label><input type="checkbox" name="cdf_graph" value="true" {% if cdf_graph %}checked{% endif %}> CDF Graph</label>
+                    <label>Select Matrices:</label>
+                    <label><input type="checkbox" name="similarity_matrix" value="true" {% if similarity_matrix %}checked{% endif %}> Similarity Matrix</label>
+                    <label><input type="checkbox" name="likeness_matrix" value="true" {% if likeness_matrix %}checked{% endif %}> Likeness Matrix</label>
+                    <label><input type="checkbox" name="ks_matrix" value="true" {% if ks_matrix %}checked{% endif %}> KS Matrix</label>
+                    <label><input type="checkbox" name="kuiper_matrix" value="true" {% if kuiper_matrix %}checked{% endif %}> Kuiper Matrix</label>
+                    <label><input type="checkbox" name="cross_correlation_matrix" value="true" {% if cross_correlation_matrix %}checked{% endif %}> Cross-Correlation Matrix</label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Plot</button>
+        </form>
+    {% endif %}
+</div>
+<br />
+<br />

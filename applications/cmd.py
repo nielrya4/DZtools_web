@@ -1,4 +1,4 @@
-from applications.dz_stats import run
+from applications.stats import run
 from flask import render_template
 
 
@@ -12,7 +12,7 @@ def process_cmd(cmd):
             result = run(args)
             return page_out(result)
     elif cmd == "dz_stats":
-        return page_out(render_template("dz_stats.html"))
+        return page_out(render_template("dz_stats/dz_stats.html"))
     elif cmd == "clear":
         return clear()
     elif cmd == "exit":
