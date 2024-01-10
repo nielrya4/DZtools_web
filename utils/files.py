@@ -97,14 +97,15 @@ def read_data_from_file(filepath):
 
 
 def get_extension(file):
+    # Gets the extension of a file. I.E. ".xlsx" or ".txt"
     if file.filename == '':
-        return None  # No file selected
+        return None
     filename = secure_filename(file.filename)
     return filename.rsplit('.', 1)[1].lower() if '.' in filename else None
 
 
 def upload_file(file, session_key):
-    """Upload a file to the specified folder with the session key in the filename."""
+    # Upload a file to the specified folder with the session key in the filename.
     if file:
         filename = f"{session_key}_{secure_filename(file.filename)}"
         file_path = os.path.join(app.UPLOAD_FOLDER, filename)
@@ -114,16 +115,15 @@ def upload_file(file, session_key):
 
 
 def file_in_folder(folder_path):
-    """Check if there is any file in the given folder."""
+    # Check if there is any file in the given folder.
     files = os.listdir(folder_path)
     return any(os.path.isfile(os.path.join(folder_path, filename)) for filename in files)
 
 
 def get_latest_file(folder_path):
-    """Get the latest file in the given folder based on modification time."""
+    # Get the latest file in the given folder based on modification time.
     files = [f for f in os.listdir(folder_path) if os.path.isfile(os.path.join(folder_path, f))]
     if not files:
         return None
-
     latest_file = max(files, key=lambda f: os.path.getmtime(os.path.join(folder_path, f)))
     return os.path.join(folder_path, latest_file)
