@@ -1,7 +1,11 @@
+Right now:
+    mds plot in dzstats (look at code for dzmds) (look at detritalpy)
+
 Short term:
     1. Complete the html template for DZnmf
     2. Start the route and application code for DZnmf
     3. Clean up excel downloading route, and abstract some code
+    4. Merge applications and app_routes folders
 
 Long term:
     1. Add users and login
