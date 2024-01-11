@@ -1,5 +1,20 @@
-from applications.stats import run
-from flask import render_template
+from flask import render_template, request
+from app_routes.applications import dz_stats
+
+
+def register(app):
+    @app.route('/cmd/', methods=['GET', 'POST'])
+    def dz_cmd():
+        output = request.form.get('output', "")
+        if request.method == 'POST':
+            command = request.form['command']
+            command = command.strip()
+            result = process_cmd(command)
+            if result.startswith("text "):
+                output = output + f"$ {command}\n" + result[5:] + " \n"
+            elif result.startswith("page "):
+                return result[5:]
+        return render_template('dz_cmd/dz_cmd.html', output=output)
 
 
 def process_cmd(cmd):
@@ -9,7 +24,7 @@ def process_cmd(cmd):
         args = cmd[9:]
         if len(args) > 0:
             print(args)
-            result = run(args)
+            result = dz_stats.run(args)
             return page_out(result)
     elif cmd == "dz_stats":
         return page_out(render_template("dz_stats/dz_stats.html"))

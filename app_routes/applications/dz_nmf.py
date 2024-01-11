@@ -1,7 +1,6 @@
 import os
 from flask import render_template, request, session, flash
 from utils import files, kde
-from applications import nmf
 import app as APP
 
 
@@ -36,7 +35,7 @@ def register(app):
                 filename = f"{session_key}all_data.pkl"
                 filepath = os.path.join(app.config['DATA_FOLDER'], filename)
                 files.save_data_to_file(all_data, filepath)
-                results = nmf.display(all_data,
+                results = display(all_data,
                                       als_graph=als_graph,
                                       fs_graph=fs_graph,
                                       rs_graph=rs_graph,
@@ -49,3 +48,14 @@ def register(app):
             print(f"DZnmf Error: {e}")
 
         return results
+
+
+def run(args=""):
+    return
+
+
+def display(all_data, als_graph, fs_graph, rs_graph, fr_graph, ssr_graph, test_matrix, kde_bandwidth=10):
+    return render_template("dz_nmf/dz_nmf.html",
+                           kde_bandwidth=10,
+                           als_graph=True,
+                           fs_graph=True)
