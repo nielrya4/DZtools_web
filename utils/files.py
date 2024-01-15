@@ -1,49 +1,25 @@
-import openpyxl
 import pandas as pd
 import numpy as np
 import os
 import app
-from utils import format, measures
+from utils import measures
 import pickle
 from werkzeug.utils import secure_filename
+from objects.documents import Spreadsheet
 
 ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
 
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+def allowed_file(filename, allowed_extensions=None):
+    if allowed_extensions is None:
+        allowed_extensions = ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 
 def read_excel(file):
-    try:
-        wb = openpyxl.load_workbook(file, read_only=False)
-        sheet = wb.active
-
-        num_cols = 0
-        for col in sheet.iter_cols(values_only=True):
-            num_cols += 1
-
-        all_data = []
-        for col in range(1, num_cols + 1, 2):
-            if sheet.cell(row=1, column=col).value is not None:
-                header = f"{sheet.cell(row=1, column=col).value}"
-                data = format.trim_none([value for value in sheet.iter_rows(min_col=col,
-                                                                            max_col=col,
-                                                                            min_row=2,
-                                                                            values_only=True)])
-
-                bandwidth = format.trim_none([value for value in sheet.iter_rows(min_col=col + 1,
-                                                                                 max_col=col + 1,
-                                                                                 min_row=2,
-                                                                                 values_only=True)])
-                data_set = [header, data, bandwidth]
-                all_data.append(data_set)
-
-    except Exception as e:
-        print(f"{e}")
-        raise ValueError(f"Error parsing Excel file: {e}")
-
-    return all_data
+    excel_file = Spreadsheet(file)
+    samples = excel_file.read_samples()
+    return samples
 
 
 def generate_matrix(y_value_arrays, row_labels=None, col_labels=None, matrix_type="similarity"):
@@ -101,7 +77,15 @@ def get_extension(file):
     if file.filename == '':
         return None
     filename = secure_filename(file.filename)
-    return filename.rsplit('.', 1)[1].lower() if '.' in filename else None
+    return filename.rsplit('.', 1)[1] if '.' in filename else None
+
+
+def get_name_only(file):
+    # Gets the extension of a file. I.E. ".xlsx" or ".txt"
+    if file.filename == '':
+        return None
+    filename = secure_filename(file.filename)
+    return filename.rsplit('.', 1)[0] if '.' in filename else None
 
 
 def upload_file(file, session_key):
