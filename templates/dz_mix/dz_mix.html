@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>DZmix</title>
+        {% include 'global/header.html' %}
+    </head>
+    <body>
+        {% include 'global/nav.html' %}
+        <div class="container mt-5">
+            <h1 class="text-left mb-4">DZmix</h1>
+            {% include 'dz_mix/include/controls.html' %}
+            {% include 'dz_mix/include/results.html' %}
+        </div>
+        <script src="{{ url_for('static',filename='scripts/navbar.js') }}"></script>
+        <!-- <script src="{{ url_for('static',filename='scripts/stacked_switch.js') }}"></script> /-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

@@ -4,7 +4,7 @@
             <div class="row">
                 <label for="file" class="form-label">Choose an Excel file (.xlsx or .xls)</label>
                 <div class="col-md-8">
-                    <input type="file" name="file" class="form-control" id="file" accept=".xlsx, .xls"  {% if not file and 'last_uploaded_file' not in session %} required {% endif %}>
+                    <input type="file" name="file" class="form-control" id="file" accept=".xlsx, .xls" required>
                 </div>
             </div>
             <br />

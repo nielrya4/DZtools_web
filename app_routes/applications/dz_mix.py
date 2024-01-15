@@ -5,10 +5,10 @@ import app as APP
 
 
 def register(app):
-    @app.route('/dz_nmf/', methods=['GET', 'POST'])
-    def dz_nmf():
+    @app.route('/dz_mix/', methods=['GET', 'POST'])
+    def dz_mix():
         # Set defaults to render the page
-        results = render_template("dz_nmf/dz_nmf.html",
+        results = render_template("dz_mix/dz_mix.html",
                                   kde_bandwidth=10,
                                   als_graph=True,
                                   fs_graph=True)
@@ -55,7 +55,7 @@ def run(args=""):
 
 
 def display(all_data, als_graph, fs_graph, rs_graph, fr_graph, ssr_graph, test_matrix, kde_bandwidth=10):
-    return render_template("dz_nmf/dz_nmf.html",
+    return render_template("dz_mix/dz_mix.html",
                            kde_bandwidth=10,
                            als_graph=True,
                            fs_graph=True)
