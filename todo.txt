@@ -1,13 +1,9 @@
-Right now:
-    mds plot in dzstats (look at code for dzmds) (look at detritalpy)
-
 Short term:
-    1. Complete the html template for DZnmf
-    2. Start the route and application code for DZnmf
-    3. Clean up excel downloading route, and abstract some code
-    4. Merge applications and app_routes folders
+    1. Clean up download routes
+    2. Create an MDS class in the Graphs library
+    3. Clean up mix and nmf pages and get rid of using all_data (update to use samples and grains instead)
 
 Long term:
     1. Add users and login
     2. Add Excel spreadsheet editor
-    3. Implement another app, maybe DZstats2D or DZmix
+    3. Implement another app, maybe DZstats2D or dz_nmf
