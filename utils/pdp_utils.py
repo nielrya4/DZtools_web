@@ -1,27 +1,20 @@
 from io import BytesIO
 import matplotlib.pyplot as plt
 import numpy as np
-from utils import format
 from flask import (request, redirect)
 
 
-def pdp_function(data, sigma, nsteps=1000):
-    data = format.trim_none(data)
-    sigma = format.trim_none(sigma)
-    x = np.linspace((min(min(row) for row in data)) - (2 * max(max(row) for row in sigma)),
-                    (max(max(row) for row in data)) + (2 * max(max(row) for row in sigma)),
-                    nsteps)
-    y = np.zeros(nsteps)
-    N = len(data)
-
-    if not isinstance(sigma[0], (list, tuple, np.ndarray)):
-        sigma = [sigma] * len(data)
-
-    for i in range(N):
-        for s in sigma[i]:
-            y = (y + 1.0 / N *
-                 (1.0 / (np.sqrt(2 * np.pi) * s)) *
-                 np.exp(-(x - float(data[i][0])) ** 2 / (2 * float(s) ** 2)))
+def pdp_function(sample, num_steps=4000, x_min=0, x_max=4000):
+    x = np.linspace(x_min, x_max, num_steps)
+    y = np.zeros_like(x)
+    ages = [grain.age for grain in sample.grains]
+    bandwidths = [grain.uncertainty for grain in sample.grains]
+    for i in range(len(ages)):
+        kernel_sum = np.zeros(num_steps)
+        s = bandwidths[i]
+        kernel_sum += (1.0 / (np.sqrt(2 * np.pi) * s)) * np.exp(-(x - float(ages[i])) ** 2 / (2 * float(s) ** 2))
+        y += kernel_sum
+    y /= np.sum(y)
     return x, y
 
 

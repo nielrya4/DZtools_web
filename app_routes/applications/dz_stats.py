@@ -2,8 +2,10 @@ import os
 from flask import render_template, request, session, flash
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
-from utils import files, kde, cdf
+from utils import files, kde_utils
 import app as APP
+from objects.documents import Spreadsheet
+from objects.graphs import KDE, CDF
 
 
 def register(app):
@@ -18,6 +20,10 @@ def register(app):
         try:
             kde_bandwidth = int(request.form.get('kde_bandwidth', 10))
             kde_stacked = request.form.get('kde_stacked') == "true"
+
+            session["kde_bandwidth"] = kde_bandwidth
+            session["kde_stacked"] = kde_stacked
+
             kde_graph = request.form.get('kde_graph') == "true"
             cdf_graph = request.form.get('cdf_graph') == "true"
 
@@ -30,35 +36,29 @@ def register(app):
             if session.get("last_uploaded_file") is not None:
                 last_uploaded_file = session.get("last_uploaded_file")
                 file = os.path.join(APP.UPLOAD_FOLDER, last_uploaded_file)
-
-                all_data = files.read_excel(file)
-                all_data = kde.replace_bandwidth(all_data, bandwidth=kde_bandwidth)
-                all_data.reverse()
-
-                # Save data to the file system
+                samples = Spreadsheet(file).read_samples()
+                for sample in samples:
+                    sample.replace_bandwidth(kde_bandwidth)
                 session_key = session.get('SECRET_KEY', APP.SECRET_KEY)
                 filename = f"{session_key}all_data.pkl"
                 filepath = os.path.join(app.config['DATA_FOLDER'], filename)
-                files.save_data_to_file(all_data, filepath)
-
-                results = display(all_data,
-                                        kde_graph=kde_graph,
-                                        kde_stacked=kde_stacked,
-                                        cdf_graph=cdf_graph,
-                                        similarity_matrix=similarity_matrix,
-                                        likeness_matrix=likeness_matrix,
-                                        ks_matrix=ks_matrix,
-                                        kuiper_matrix=kuiper_matrix,
-                                        cross_correlation_matrix=cross_correlation_matrix)
+                files.save_data_to_file(samples, filepath)
+                results = display(samples,
+                                  kde_graph=kde_graph,
+                                  kde_stacked=kde_stacked,
+                                  cdf_graph=cdf_graph,
+                                  similarity_matrix=similarity_matrix,
+                                  likeness_matrix=likeness_matrix,
+                                  ks_matrix=ks_matrix,
+                                  kuiper_matrix=kuiper_matrix,
+                                  cross_correlation_matrix=cross_correlation_matrix)
         except ValueError as e:
             flash(str(e))
             print(f"{e}")
-
         return results
 
 
 def run(args=""):           # Not even close to being finished. This is for terminal-like functionality
-    filename = ""
     all_data = ""
 
     kde_graph = False
@@ -78,14 +78,14 @@ def run(args=""):           # Not even close to being finished. This is for term
             if arg.startswith("i "):
                 filename = arg.split("i ")[1].strip()
                 if os.path.exists(filename):
-                    session_key = session.get('SECRET_KEY', app.SECRET_KEY)
+                    session_key = session.get('SECRET_KEY', APP.SECRET_KEY)
                     with open(filename, 'rb') as file:
                         file_storage = FileStorage(file, filename=secure_filename(file.name))
                         uploaded_file = files.upload_file(file_storage, session_key)
 
                     session['last_uploaded_file'] = os.path.basename(uploaded_file)
                     all_data = files.read_excel(uploaded_file)
-                    all_data = kde.replace_bandwidth(all_data, bandwidth=kde_bandwidth)
+                    all_data = (kde_utils.replace_bandwidth(all_data, bandwidth=kde_bandwidth))
                     all_data.reverse()
                 else:
                     return render_template(template_name_or_list="dz_cmd/dz_cmd.html",
@@ -110,7 +110,7 @@ def run(args=""):           # Not even close to being finished. This is for term
             elif arg == "cross_correlation":
                 cross_correlation_matrix = True
 
-        return display(all_data=all_data,
+        return display(samples=all_data,
                        kde_graph=kde_graph,
                        kde_stacked=kde_stacked,
                        kde_bandwidth=kde_bandwidth,
@@ -122,16 +122,15 @@ def run(args=""):           # Not even close to being finished. This is for term
                        cross_correlation_matrix=cross_correlation_matrix)
 
 
-def display(all_data, kde_graph, kde_stacked, cdf_graph, similarity_matrix, likeness_matrix, ks_matrix, kuiper_matrix, cross_correlation_matrix, kde_bandwidth=10):
-    kde_bandwidth = request.form.get("kde_bandwidth", kde_bandwidth)
-    graph_data = kde.kde_plot(all_data, stacked=kde_stacked) if kde_graph else None
-    cdf_data = cdf.plot_cdf(all_data) if cdf_graph else None
+def display(samples, kde_graph, kde_stacked, cdf_graph, similarity_matrix, likeness_matrix, ks_matrix, kuiper_matrix, cross_correlation_matrix, kde_bandwidth=10):
+    kde_bandwidth = session.get("kde_bandwidth", kde_bandwidth)
+    graph_data = KDE(samples, f"Kernel Density Estimate (Bandwidth: {kde_bandwidth})", stacked=kde_stacked).plot() if kde_graph else None
+    cdf_data = CDF(samples, "Cumulative Density Function").plot() if cdf_graph else None
 
-    row_labels = kde.get_headers(all_data)
-    col_labels = kde.get_headers(all_data)
-    col_labels.reverse()
+    row_labels = [sample.name for sample in samples]
+    col_labels = [sample.name for sample in samples]
 
-    y_values = kde.get_y_values(all_data)
+    y_values = kde_utils.get_y_values(samples)
 
     if similarity_matrix:
         similarity_data = files.generate_matrix(y_values,
