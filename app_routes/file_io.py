@@ -1,9 +1,9 @@
 import os
 from io import BytesIO
 from flask import session, redirect, flash, request, send_from_directory, send_file, url_for
-from utils import files, kde_utils
-from objects.graphs import KDE, CDF
-from objects.documents import Spreadsheet
+from utils import files, kde_utils, graph_utils
+from objects.graphs import KDE, CDF, PDP
+from objects.documents import SampleSheet
 import app as APP
 
 
@@ -16,7 +16,7 @@ def register(app):
         if file_format in {'png', 'svg', 'pdf', 'eps'}:
             last_uploaded_file = session.get("last_uploaded_file")
             file = os.path.join(APP.UPLOAD_FOLDER, last_uploaded_file)
-            samples = Spreadsheet(file).read_samples()
+            samples = SampleSheet(file).read_samples()
             cdf_graph = CDF(samples, title)
             return cdf_graph.download(f"{file_name.split('.', 1)[0]}.{file_format}", file_format)
         else:
@@ -25,8 +25,18 @@ def register(app):
 
     @app.route('/download_pdp', methods=['GET'])
     def download_pdp():
-        # TODO: make this look like download_kde()
-        return None
+        file_name = session["last_uploaded_file"][33:]
+        file_format = request.args.get('format', 'png')
+        title = f"Probability Density Plot"
+        if file_format in {'png', 'svg', 'pdf', 'eps'}:
+            last_uploaded_file = session.get("last_uploaded_file")
+            file = os.path.join(APP.UPLOAD_FOLDER, last_uploaded_file)
+            samples = SampleSheet(file).read_samples()
+            pdp_graph = PDP(samples, title, False)
+            return pdp_graph.download(f"{file_name.split('.', 1)[0]}.{file_format}", file_format)
+        else:
+            flash('Invalid download format')
+            return redirect(url_for('main'))
 
     @app.route('/download_kde', methods=['GET'])
     def download_kde():
@@ -38,7 +48,7 @@ def register(app):
         if file_format in {'png', 'svg', 'pdf', 'eps'}:
             last_uploaded_file = session.get("last_uploaded_file")
             file = os.path.join(APP.UPLOAD_FOLDER, last_uploaded_file)
-            samples = Spreadsheet(file).read_samples()
+            samples = SampleSheet(file).read_samples()
             for sample in samples:
                 sample.replace_bandwidth(kde_bandwidth)
             kde_graph = KDE(samples, title, kde_stacked)
@@ -47,16 +57,15 @@ def register(app):
             flash('Invalid download format')
             return redirect(url_for('main'))
 
-
     @app.route('/download_excel')
     def download_excel():
         matrix_type = request.args.get('matrix_type', "similarity")
         all_data = files.read_data_from_file(os.path.join(app.config['DATA_FOLDER'], APP.SECRET_KEY + "all_data.pkl"))
         y_value_arrays = kde_utils.get_y_values(all_data)
         y_value_arrays.reverse()
-        row_labels = kde_utils.get_sample_names(all_data)
+        row_labels = graph_utils.get_sample_names(all_data)
 
-        col_labels = kde_utils.get_sample_names(all_data)
+        col_labels = graph_utils.get_sample_names(all_data)
         col_labels.reverse()
         excel_data = files.generate_matrix(y_value_arrays,
                                            row_labels=row_labels,

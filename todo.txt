@@ -1,9 +1,20 @@
-Short term:
-    1. Clean up download routes
-    2. Create an MDS class in the Graphs library
-    3. Clean up mix and nmf pages and get rid of using all_data (update to use samples and grains instead)
+finish matrices classes
 
-Long term:
-    1. Add users and login
-    2. Add Excel spreadsheet editor
-    3. Implement another app, maybe DZstats2D or dz_nmf
+
+Consolidate all apps/pages --get rid of mix and nmf, and maybe rename stats.
+
+Add a section where samples can be uplaoded.
+    Optional: Loaded samples vs active samples boxes
+And add a section where a template can be uploaded OR where formats can be chosen.
+    Add a place to download a template of the format options
+    Establish a template file format for repeat graph/matrix generation
+        I.E.:
+
+        mode -fixed_bandwidth(10)
+        kde -stacked
+        sim_matrix
+        mode -sample_bandwidth
+        pdp
+
+Add users and login
+Add Excel spreadsheet editor

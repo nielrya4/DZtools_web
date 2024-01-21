@@ -43,3 +43,11 @@ def get_x_min(samples):
             if grain.age - grain.uncertainty < x_min:
                 x_min = grain.age - grain.uncertainty
     return x_min
+
+
+def get_sample_names(samples):
+    all_names = []
+    for sample in samples:
+        name = sample.name
+        all_names.append(name)
+    return all_names

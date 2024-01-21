@@ -37,9 +37,12 @@
                             </div>
                         </div>
                     </div>
+                    <label><input type="checkbox" name="pdp_graph" value="true" {% if pdp_graph %}checked{% endif %}> PDP Graph</label>
                     <label><input type="checkbox" name="cdf_graph" value="true" {% if cdf_graph %}checked{% endif %}> CDF Graph</label>
+                    <label><input type="checkbox" name="mds_graph" value="true" {% if mds_graph %}checked{% endif %}> MDS Graph</label>
                     <label>Select Matrices:</label>
                     <label><input type="checkbox" name="similarity_matrix" value="true" {% if similarity_matrix %}checked{% endif %}> Similarity Matrix</label>
+                    <label><input type="checkbox" name="dissimilarity_matrix" value="true" {% if dissimilarity_matrix %}checked{% endif %}> Dissimilarity Matrix</label>
                     <label><input type="checkbox" name="likeness_matrix" value="true" {% if likeness_matrix %}checked{% endif %}> Likeness Matrix</label>
                     <label><input type="checkbox" name="ks_matrix" value="true" {% if ks_matrix %}checked{% endif %}> KS Matrix</label>
                     <label><input type="checkbox" name="kuiper_matrix" value="true" {% if kuiper_matrix %}checked{% endif %}> Kuiper Matrix</label>

@@ -5,7 +5,7 @@ import app
 from utils import measures
 import pickle
 from werkzeug.utils import secure_filename
-from objects.documents import Spreadsheet
+from objects.documents import SampleSheet
 
 ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
 
@@ -17,39 +17,43 @@ def allowed_file(filename, allowed_extensions=None):
 
 
 def read_excel(file):
-    excel_file = Spreadsheet(file)
+    excel_file = SampleSheet(file)
     samples = excel_file.read_samples()
     return samples
 
 
-def generate_matrix(y_value_arrays, row_labels=None, col_labels=None, matrix_type="similarity"):
-    num_data_sets = len(y_value_arrays)
+def generate_matrix(samples, row_labels=None, col_labels=None, matrix_type="similarity"):
+    num_data_sets = len(samples)
     matrix = np.zeros((num_data_sets, num_data_sets))
-
     if matrix_type == "similarity":
-        for i, y1 in enumerate(y_value_arrays):
-            for j, y2 in enumerate(y_value_arrays):
-                similarity_score = measures.similarity_test(y1, y2)
+        for i, sample1 in enumerate(samples):
+            for j, sample2 in enumerate(samples):
+                similarity_score = measures.similarity_test(sample1, sample2)
                 matrix[i, j] = similarity_score
+    elif matrix_type == "dissimilarity":
+        for i, sample1 in enumerate(samples):
+            for j, sample2 in enumerate(samples):
+                dissimilarity_score = measures.dissimilarity_test(sample1, sample2)
+                matrix[i, j] = dissimilarity_score
     elif matrix_type == "likeness":
-        for i, y1 in enumerate(y_value_arrays):
-            for j, y2 in enumerate(y_value_arrays):
-                likeness_score = measures.likeness_test(y1, y2)
+        for i, sample1 in enumerate(samples):
+            for j, sample2 in enumerate(samples):
+                likeness_score = measures.likeness_test(sample1, sample2)
                 matrix[i, j] = likeness_score
     elif matrix_type == "ks":
-        for i, y1 in enumerate(y_value_arrays):
-            for j, y2 in enumerate(y_value_arrays):
-                ks_score = measures.ks_test(y1, y2)
+        for i, sample1 in enumerate(samples):
+            for j, sample2 in enumerate(samples):
+                ks_score = measures.ks_test(sample1, sample2)
                 matrix[i, j] = ks_score
     elif matrix_type == "kuiper":
-        for i, y1 in enumerate(y_value_arrays):
-            for j, y2 in enumerate(y_value_arrays):
-                kuiper_score = measures.kuiper_test(y1, y2)
+        for i, sample1 in enumerate(samples):
+            for j, sample2 in enumerate(samples):
+                kuiper_score = measures.kuiper_test(sample1, sample2)
                 matrix[i, j] = kuiper_score
     elif matrix_type == "cross_correlation":
-        for i, y1 in enumerate(y_value_arrays):
-            for j, y2 in enumerate(y_value_arrays):
-                cross_correlation_score = measures.cross_correlation_test(y1, y2)
+        for i, sample1 in enumerate(samples):
+            for j, sample2 in enumerate(samples):
+                cross_correlation_score = measures.cross_correlation_test(sample1, sample2)
                 matrix[i, j] = cross_correlation_score
 
     # Create a DataFrame with the normalized similarity scores and labels

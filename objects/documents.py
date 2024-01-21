@@ -2,7 +2,7 @@ import openpyxl
 from objects.zircon import Sample, Grain
 
 
-class Spreadsheet:
+class SampleSheet:
     def __init__(self, file):
         self.file = file
 

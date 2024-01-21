@@ -16,23 +16,13 @@ def kde_function(sample, num_steps=4000, x_min=0, x_max=4000):
     return x, y
 
 
-def get_y_values(samples):
-    all_y_values = []
+def get_y_values(sample):
+    y = []
     try:
-        for sample in samples:
-            x, y = kde_function(sample)
-            all_y_values.append(y)
+        x, y = kde_function(sample)
     except ValueError as e:
         print(f"{e}")
-    return all_y_values
-
-
-def get_sample_names(samples):
-    all_names = []
-    for sample in samples:
-        name = sample.name
-        all_names.append(name)
-    return all_names
+    return y
 
 
 def replace_bandwidth(all_data, bandwidth):

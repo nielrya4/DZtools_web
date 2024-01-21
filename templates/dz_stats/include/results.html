@@ -1,6 +1,7 @@
 <div class="col-md-9">
     {% if graph_data  and kde_graph %}
     <div class="text-left">
+        <h1>KDE Plot</h1>
         <div>{{ graph_data|safe }}</div>
         <div class="mt-3">
             <div class="btn-group">
@@ -19,8 +20,30 @@
     <br />
     <br />
     {% endif %}
+    {% if pdp_data and pdp_graph %}
+    <div class="text-left">
+        <h1>PDP Plot</h1>
+        <div>{{ pdp_data|safe }}</div>
+        <div class="mt-3">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Download PDP
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/download_kde?format=png">PNG</a></li>
+                    <li><a class="dropdown-item" href="/download_kde?format=svg">SVG</a></li>
+                    <li><a class="dropdown-item" href="/download_kde?format=pdf">PDF</a></li>
+                    <li><a class="dropdown-item" href="/download_kde?format=eps">EPS</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    {% endif %}
     {% if cdf_data and cdf_graph %}
         <div class="text-left">
+        <h1>CDF Plot</h1>
             <div>{{ cdf_data|safe }}</div>
             <div class="mt-3">
                 <div class="btn-group">
@@ -39,6 +62,27 @@
         <br />
         <br />
     {% endif %}
+    {% if mds_data  and mds_graph %}
+    <div class="text-left">
+        <h1>MDS Plot</h1>
+        <div>{{ mds_data|safe }}</div>
+        <div class="mt-3">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Download MDS
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/download_kde?format=png">PNG</a></li>
+                    <li><a class="dropdown-item" href="/download_kde?format=svg">SVG</a></li>
+                    <li><a class="dropdown-item" href="/download_kde?format=pdf">PDF</a></li>
+                    <li><a class="dropdown-item" href="/download_kde?format=eps">EPS</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <br />
+    <br />
+    {% endif %}
     {% if similarity_data is not none and similarity_matrix%}
         <h3>Similarity Matrix</h3>
         {{ similarity_data.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')|safe }}
@@ -52,6 +96,26 @@
                         <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xlsx', matrix_type="similarity") }}">XLSX</a></li>
                         <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xls', matrix_type="similarity") }}">XLS</a></li>
                         <li><a class="dropdown-item" href="{{ url_for('download_excel', format='csv', matrix_type="similarity") }}">CSV</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <br />
+        <br />
+    {% endif %}
+    {% if dissimilarity_data is not none and dissimilarity_matrix%}
+        <h3>Dissimilarity Matrix</h3>
+        {{ dissimilarity_data.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')|safe }}
+        <div class="col-md-3">
+            <div class="mt-3">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        Download Dissimilarity Matrix
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xlsx', matrix_type="dissimilarity") }}">XLSX</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('download_excel', format='xls', matrix_type="dissimilarity") }}">XLS</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('download_excel', format='csv', matrix_type="dissimilarity") }}">CSV</a></li>
                     </ul>
                 </div>
             </div>
