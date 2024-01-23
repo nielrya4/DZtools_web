@@ -141,3 +141,8 @@ def register(app):
     def menu_icon():
         return send_from_directory(os.path.join(app.root_path, 'static'),
                                    'static/menu.ico', mimetype='image/vnd.microsoft.icon')
+
+    @app.route('/test_data.jpg')
+    def test_data_img():
+        return send_from_directory(os.path.join(app.root_path, 'static'),
+                                   'static/menu.jpg', mimetype='image/jpeg')

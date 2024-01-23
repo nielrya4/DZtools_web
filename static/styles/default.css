@@ -40,6 +40,11 @@
         .navbar-brand img {
             margin-right: 5px;
         }
+        footer {
+            background-color: #000000;
+            font-size: 14px;
+            width: 100%;
+        }
 
             /* Custom CSS for color changes */
         #dztools-link {

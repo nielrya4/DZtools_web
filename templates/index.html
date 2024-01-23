@@ -11,16 +11,32 @@
         <p class="lead">Web-based data visualization and interpretation for detrital zircon geochronology data</p>
         <br />
         <br />
-
         <h3>Updates</h3>
-        <p>DZstats Web is live! Click the link in the banner to try it out.</p>
-
+        <p>Generating mixed samples and unmixing them to determine provenance is underway. Eventually, the web version
+        of DZstats will be phased out in favor of an intuitive GUI that puts all the DZtools in one place.</p>
+        <br />
         <h3>How-To</h3>
-        <p>To use our tools for detrital zircon, please make sure you are using 2-sigma uncertainties in your data.</p>
-
+        <p>
+            DZstats is the only fully-functional app so far developed. Click the link in the banner to try it out.
+            With it, you can generate and export plots such as KDE, PDP, CDF, and MDS. You can also make matrices like
+            similarity, cross-correlation, likeness, etc. Down this <a>test data file</a>, head over to DZstats, upload
+            the file, and select the plots or matrices that you want to generate. You can use the download buttons to
+            download plots in SVG, PDF, PNG, or EPS formats. The matrices can be downloaded as XLS, XLSX, and CSV files.
+        </p>
+        <p>
+            Note that this website is currently hosted on Render's free tier, which limits its processing capabilities
+            significantly. We are working with only 0.1 GB of RAM. Because of this, it would be wise to only generate
+            one graph at a time. If you overload the machine, the web browser will display something along the lines of
+            "This page has stopped working." If you receive this error, don't worry. Just go to the home page again.
+            Once we receive funding, we can upgrade to a tier with more processing power.
+        </p>
+        <p>
+            To use our tools for detrital zircon, please make sure to use data that looks like this:
+            <img src="{{ url_for('static', filename='/test_data.jpg') }}" alt="DZ.ico">
+        </p>
     </div>
-
     <script src="../static/scripts/navbar.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    {% include 'global/footer.html' %}
 </body>
 </html>
