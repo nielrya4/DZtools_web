@@ -132,84 +132,31 @@ class MDS:
         self.samples = samples
         self.title = title
 
-    '''def __plot(self):
-        samples = self.samples
-        num_samples = len(samples)
-        matrix = np.zeros((num_samples, num_samples))
-        sample_names = [sample.name for sample in samples]  # Extract sample names
-
-        for i, sample1 in enumerate(samples):
-            for j, sample2 in enumerate(samples):
-                dissimilarity_score = measures.dissimilarity_test(sample1, sample2)
-                matrix[i, j] = dissimilarity_score
-
-        # Compute MDS
-        mds = MultidimensionalScaling(n_components=2, dissimilarity='precomputed')
-        mds_result = mds.fit_transform(matrix)
-
-        # Calculate pairwise distances
-        distances = pairwise_distances(mds_result)
-
-        # Find closest neighbors
-        closest_neighbors_indices = np.argmin(distances, axis=1)
-
-        # Plot MDS with sample names as labels and lines to closest neighbors
-        fig, ax = plt.subplots(figsize=(8, 6), dpi=100)
-        scatter = ax.scatter(mds_result[:, 0], mds_result[:, 1])
-
-        for i, (x, y) in enumerate(mds_result):
-            ax.text(x, y + 0.005, sample_names[i], fontsize=8, ha='center', va='center')  # Adjusted placement
-
-        for i, neighbor_index in enumerate(closest_neighbors_indices):
-            x1, y1 = mds_result[i]
-            x2, y2 = mds_result[neighbor_index]
-            plt.plot([x1, x2], [y1, y2], 'k--', linewidth=0.5)  # Draw lines using plt.plot
-
-        fig.suptitle(self.title if self.title is not None else "Multidimensional Scaling Plot")
-        fig.text(0.5, 0.01, 'Dimension 1', ha='center', va='center', fontsize=12)
-        fig.text(0.01, 0.5, 'Dimension 2', va='center', rotation='vertical', fontsize=12)
-        fig.tight_layout()
-
-        return fig'''
-
     def __plot(self):
-        # Sample data
         samples = self.samples
         num_samples = len(samples)
         matrix = np.zeros((num_samples, num_samples))
         sample_names = [sample.name for sample in samples]  # Extract sample names
-
         for i, sample1 in enumerate(samples):
             for j, sample2 in enumerate(samples):
                 dissimilarity_score = measures.dissimilarity_test(sample1, sample2)
                 matrix[i, j] = dissimilarity_score
-
-        # Compute MDS
         mds = MultidimensionalScaling(n_components=2, dissimilarity='precomputed')
         mds_result = mds.fit_transform(matrix)
-
-        # Calculate pairwise distances
         distances = pairwise_distances(mds_result)
-
-        # Plot MDS with sample names as labels
         fig, ax = plt.subplots(figsize=(8, 6), dpi=100)
         scatter = ax.scatter(mds_result[:, 0], mds_result[:, 1])
-
         for i, (x, y) in enumerate(mds_result):
             ax.text(x, y + 0.005, sample_names[i], fontsize=8, ha='center', va='center')  # Adjusted placement
-
-        # Draw lines to nearest neighbors
         for i in range(num_samples):
             neighbor_index = np.argmin(distances[i, np.where(np.arange(num_samples) != i)])
             x1, y1 = mds_result[i]
             x2, y2 = mds_result[neighbor_index]
             ax.plot([x1, x2], [y1, y2], 'k--', linewidth=0.5)
-
         fig.suptitle(self.title if self.title is not None else "Multidimensional Scaling Plot")
         fig.text(0.5, 0.01, 'Dimension 1', ha='center', va='center', fontsize=12)
         fig.text(0.01, 0.5, 'Dimension 2', va='center', rotation='vertical', fontsize=12)
         fig.tight_layout()
-
         return fig
 
     def plot(self):

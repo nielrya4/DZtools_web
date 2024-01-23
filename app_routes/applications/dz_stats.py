@@ -39,7 +39,9 @@ def register(app):
             if session.get("last_uploaded_file") is not None:
                 last_uploaded_file = session.get("last_uploaded_file")
                 file = os.path.join(APP.UPLOAD_FOLDER, last_uploaded_file)
-                samples = SampleSheet(file).read_samples()
+                sample_sheet = SampleSheet(file)
+                samples = sample_sheet.read_samples()
+                # samples.append(sample_sheet.create_mixed_sample()) # TODO: Add mixed sample functionality
                 session_key = session.get('SECRET_KEY', APP.SECRET_KEY)
                 filename = f"{session_key}all_data.pkl"
                 filepath = os.path.join(app.config['DATA_FOLDER'], filename)

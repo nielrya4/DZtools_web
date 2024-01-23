@@ -2,7 +2,7 @@ import os
 from io import BytesIO
 from flask import session, redirect, flash, request, send_from_directory, send_file, url_for
 from utils import files, kde_utils, graph_utils
-from objects.graphs import KDE, CDF, PDP
+from objects.graphs import KDE, CDF, PDP, MDS
 from objects.documents import SampleSheet
 import app as APP
 
@@ -53,6 +53,21 @@ def register(app):
                 sample.replace_bandwidth(kde_bandwidth)
             kde_graph = KDE(samples, title, kde_stacked)
             return kde_graph.download(f"{file_name.split('.', 1)[0]}.{file_format}", file_format)
+        else:
+            flash('Invalid download format')
+            return redirect(url_for('main'))
+
+    @app.route('/download_mds', methods=['GET'])
+    def download_mds():
+        file_name = session["last_uploaded_file"][33:]
+        file_format = request.args.get('format', 'png')
+        title = f"Multidimensional Scaling Plot"
+        if file_format in {'png', 'svg', 'pdf', 'eps'}:
+            last_uploaded_file = session.get("last_uploaded_file")
+            file = os.path.join(APP.UPLOAD_FOLDER, last_uploaded_file)
+            samples = SampleSheet(file).read_samples()
+            mds_graph = MDS(samples, title)
+            return mds_graph.download(f"{file_name.split('.', 1)[0]}.{file_format}", file_format)
         else:
             flash('Invalid download format')
             return redirect(url_for('main'))
