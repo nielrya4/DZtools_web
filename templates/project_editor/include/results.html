@@ -1,0 +1,6 @@
+{% if items is not none %}
+    {% for item in items %}
+        <div>{{item | safe}}</div>
+        <br />
+    {% endfor %}
+{% endif %}

@@ -1,0 +1,37 @@
+<div class="col-md9">
+    <form method="post" action="/upload_file" enctype="multipart/form-data" id="fileForm" class="mb-4">
+        <div class="mb-3">
+            <div class="row">
+                <label for="file" class="form-label">Choose an Excel file (.xlsx or .xls)</label>
+                <div class="col-md-8">
+                    <input type="file" name="file" class="form-control" id="file" accept=".xlsx, .xls" required>
+                </div>
+            </div>
+            <br />
+            <button type="submit" class="btn btn-primary">Upload {% if 'last_uploaded_file' in session %}New{% endif %} File</button>
+        </div>
+    </form>
+    {% if (file or 'last_uploaded_file' in session) %}
+        <form method="post" action="/upload_script_file" enctype="multipart/form-data" id="fileForm" class="mb-4">
+            <div class="mb-3">
+                <h4 style="color:cyan;">Sample File: {{ session["last_uploaded_file"][33:] }}</h4>
+                <div class="row">
+                    <label for="file" class="form-label">Choose a DZscript file (.dzs)</label>
+                    <div class="col-md-8">
+                        <input type="file" name="code_file" class="form-control" id="code_file" accept=".dzs" required>
+                    </div>
+                </div>
+                <br />
+                <button type="submit" class="btn btn-primary">Upload {% if 'last_uploaded_script_file' in session %}New{% endif %} File</button>
+            </div>
+        </form>
+    {% endif %}
+    {% if (file or 'last_uploaded_file' in session) and "last_uploaded_script_file" in session %}
+        <br />
+        <div class="mb-3">
+            <h4 style="color:cyan;">Script File: {{ session["last_uploaded_script_file"][33:] }}</h4>
+        </div>
+        <label style = "color:cyan;" for="code_box">Code:</label>
+        <div style="color:cyan; white-space: pre-wrap" id="code_box">{{ code }}</div>
+    {% endif %}
+</div>

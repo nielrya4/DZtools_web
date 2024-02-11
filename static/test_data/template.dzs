@@ -1,0 +1,14 @@
+load $all $mixed $mean
+unstacked
+kde
+purge $all
+load $mixed $mean
+stacked
+kde
+cdf
+purge $Mixed Sample
+kde
+load $300-1
+cdf
+ks
+kpr

@@ -6,7 +6,7 @@ from utils.cdf_utils import cdf_function
 from utils import measures
 from sklearn.manifold import MDS as MultidimensionalScaling
 from utils.graph_utils import download_graph, plot_graph, get_x_max, get_x_min
-from sklearn.metrics import pairwise_distances
+from scipy.spatial.distance import squareform, pdist
 
 
 class KDE:
@@ -135,24 +135,52 @@ class MDS:
     def __plot(self):
         samples = self.samples
         num_samples = len(samples)
-        matrix = np.zeros((num_samples, num_samples))
+        dissimilarity_matrix = np.zeros((num_samples, num_samples))
         sample_names = [sample.name for sample in samples]  # Extract sample names
-        for i, sample1 in enumerate(samples):
-            for j, sample2 in enumerate(samples):
-                dissimilarity_score = measures.dissimilarity_test(sample1, sample2)
-                matrix[i, j] = dissimilarity_score
-        mds = MultidimensionalScaling(n_components=2, dissimilarity='precomputed')
-        mds_result = mds.fit_transform(matrix)
-        distances = pairwise_distances(mds_result)
-        fig, ax = plt.subplots(figsize=(8, 6), dpi=100)
-        scatter = ax.scatter(mds_result[:, 0], mds_result[:, 1])
-        for i, (x, y) in enumerate(mds_result):
-            ax.text(x, y + 0.005, sample_names[i], fontsize=8, ha='center', va='center')  # Adjusted placement
+
         for i in range(num_samples):
-            neighbor_index = np.argmin(distances[i, np.where(np.arange(num_samples) != i)])
-            x1, y1 = mds_result[i]
-            x2, y2 = mds_result[neighbor_index]
-            ax.plot([x1, x2], [y1, y2], 'k--', linewidth=0.5)
+            for j in range(i+1, num_samples):
+                dissimilarity_matrix[i, j] = measures.dissimilarity_test(samples[i], samples[j])
+                dissimilarity_matrix[j, i] = dissimilarity_matrix[i, j]
+
+        # Classical MDS algorithm
+        n = dissimilarity_matrix.shape[0]
+        H = np.eye(n) - np.ones((n, n)) / n
+        B = -0.5 * np.dot(np.dot(H, dissimilarity_matrix ** 2), H)
+
+        eigenvalues, eigenvectors = np.linalg.eigh(B)
+
+        # Sort eigenvalues and eigenvectors in descending order
+        indices = np.argsort(eigenvalues)[::-1]
+        eigenvalues = eigenvalues[indices]
+        eigenvectors = eigenvectors[:, indices]
+
+        # Select the top two eigenvectors
+        scaled_mds_result = np.sqrt(eigenvalues[:2]) * eigenvectors[:, :2]
+
+        # Plotting
+        fig, ax = plt.subplots(figsize=(8, 6), dpi=100)
+        scatter = ax.scatter(scaled_mds_result[:, 0], scaled_mds_result[:, 1])
+
+        for i, (x, y) in enumerate(scaled_mds_result):
+            ax.text(x, y + 0.005, sample_names[i], fontsize=8, ha='center', va='center')  # Adjusted placement
+
+        for i in range(num_samples):
+            distance = float('inf')  # Initialize distance to positive infinity
+            nearest_sample = None
+
+            for j in range(num_samples):
+                if i != j:  # Exclude the sample itself
+                    dissimilarity = measures.dissimilarity_test(samples[i], samples[j])
+                    if dissimilarity < distance:
+                        distance = dissimilarity
+                        nearest_sample = samples[j]
+
+            if nearest_sample is not None:
+                x1, y1 = scaled_mds_result[i]
+                x2, y2 = scaled_mds_result[samples.index(nearest_sample)]
+                ax.plot([x1, x2], [y1, y2], 'k--', linewidth=0.5)
+
         fig.suptitle(self.title if self.title is not None else "Multidimensional Scaling Plot")
         fig.text(0.5, 0.01, 'Dimension 1', ha='center', va='center', fontsize=12)
         fig.text(0.01, 0.5, 'Dimension 2', va='center', rotation='vertical', fontsize=12)

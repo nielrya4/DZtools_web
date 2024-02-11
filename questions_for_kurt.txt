@@ -1,0 +1,8 @@
+Should MDS plot have lines? How should the colors be?
+    Yes, have lines. Think about colors.
+
+Should Relative Contribution Plots use sample names or sample numbers?
+
+How do I actually do the Monte Carlo Model?
+    Randomly select percent contributions of each source/sample
+Are we only working with ages, or should I code in other attributes to samples and grains?
