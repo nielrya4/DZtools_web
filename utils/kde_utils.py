@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def kde_function(sample, num_steps=4000, x_min=0, x_max=4000):
+def kde_function(sample, num_steps=1000, x_min=0, x_max=4000):
     x = np.linspace(x_min, x_max, num_steps)
     y = np.zeros_like(x)
     ages = [grain.age for grain in sample.grains]

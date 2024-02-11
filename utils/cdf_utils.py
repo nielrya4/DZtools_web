@@ -7,3 +7,8 @@ def cdf_function(sample):
     pdf = count / sum(count)
     cdf_values = np.cumsum(pdf)
     return bins_count, cdf_values
+
+
+def get_y_values(sample):
+    x, y = cdf_function(sample)
+    return y

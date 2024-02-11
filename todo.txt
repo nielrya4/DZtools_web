@@ -1,20 +1,23 @@
+Refine monte carlo model in dzMix. implement kuiper and r^2 tests instead of just KS. Fine tune random generation.
+
+search for more efficient MDS function
+
 finish matrices classes
 
-
-Consolidate all apps/pages --get rid of mix and nmf, and maybe rename stats.
+fully implement HTMX to lessen the amount of times the page needs reloaded
 
 Add a section where samples can be uplaoded.
     Optional: Loaded samples vs active samples boxes
+
 And add a section where a template can be uploaded OR where formats can be chosen.
     Add a place to download a template of the format options
-    Establish a template file format for repeat graph/matrix generation
-        I.E.:
+    Make templates based on what users want.
 
-        mode -fixed_bandwidth(10)
-        kde -stacked
-        sim_matrix
-        mode -sample_bandwidth
-        pdp
+Projects (up to five for each user)
+    One script/template
+    Multiple excel sheets (import samples from all of them)
+    Each project can run the script with the samples from the excel sheets.
 
 Add users and login
 Add Excel spreadsheet editor
+Add template/code editor
