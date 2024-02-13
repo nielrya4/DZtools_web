@@ -1,23 +1,20 @@
-Refine monte carlo model in dzMix. implement kuiper and r^2 tests instead of just KS. Fine tune random generation.
+Applications:
+    In dzMix, implement kuiper and KS tests instead of just r^2. Search for quicker, more optimized functions for r^2, kde generation, and cdf generation.
+    In dzStats, search for more efficient MDS function
 
-search for more efficient MDS function
+Infrastructure:
+    finish matrices classes
+    fully implement HTMX to lessen the amount of times the page needs reloaded
 
-finish matrices classes
+New Interface:
+    Word- or Excel-like toolbar with ribbon at the top. Keep it simple.
+    Add a section where samples can be uploaded.
+        Optional: Loaded samples vs active samples boxes
+    And add a section where a template can be uploaded OR where formats can be chosen.
+        Add a place to download a template of the format options
+        Make templates based on what users want.
 
-fully implement HTMX to lessen the amount of times the page needs reloaded
-
-Add a section where samples can be uplaoded.
-    Optional: Loaded samples vs active samples boxes
-
-And add a section where a template can be uploaded OR where formats can be chosen.
-    Add a place to download a template of the format options
-    Make templates based on what users want.
-
-Projects (up to five for each user)
-    One script/template
-    Multiple excel sheets (import samples from all of them)
-    Each project can run the script with the samples from the excel sheets.
-
-Add users and login
-Add Excel spreadsheet editor
-Add template/code editor
+Long Term:
+    Add users and login
+    Add Excel spreadsheet editor
+    Add template/code editor

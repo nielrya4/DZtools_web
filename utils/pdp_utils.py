@@ -4,7 +4,7 @@ import numpy as np
 from flask import (request, redirect)
 
 
-def pdp_function(sample, num_steps=4000, x_min=0, x_max=4000):
+def pdp_function(sample, num_steps=1000, x_min=0, x_max=4000):
     x = np.linspace(x_min, x_max, num_steps)
     y = np.zeros_like(x)
     ages = [grain.age for grain in sample.grains]
@@ -50,17 +50,13 @@ def plot_pdp(all_data):
     return f"<div>{graph_data}</div>"  # Decode the SVG on the webpage
 
 
-def get_y_values(all_data):
-    all_y_values = []
+def get_y_values(sample):
+    y = []
     try:
-        all_data.reverse()
-        for i, data_set in enumerate(all_data):
-            header, data, sigma = data_set[0], data_set[1], data_set[2]
-            x, y = pdp_function(data, sigma)  # Calculate the (x,y) points from our data and uncertainty
-            all_y_values.append(y)
-    except ValueError as e:  # If it fails,
+        x, y = pdp_function(sample)
+    except ValueError as e:
         print(f"{e}")
-    return all_y_values
+    return y
 
 
 def get_headers(all_data):
