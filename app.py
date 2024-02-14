@@ -3,6 +3,7 @@ import secrets
 from utils import cleanup, routes
 from flask import Flask, render_template
 
+
 UPLOAD_FOLDER = 'uploads'
 DATA_FOLDER = 'data'
 
