@@ -41,8 +41,7 @@ def register(app):
                 file = os.path.join(APP.UPLOAD_FOLDER, last_uploaded_file)
                 sample_sheet = SampleSheet(file)
                 samples = sample_sheet.read_samples()
-                # samples.append(sample_sheet.create_mean_sample())
-                # samples.append(sample_sheet.create_mixed_sample()) # TODO: Add mixed sample functionality
+
                 session_key = session.get('SECRET_KEY', APP.SECRET_KEY)
                 filename = f"{session_key}all_data.pkl"
                 filepath = os.path.join(app.config['DATA_FOLDER'], filename)
@@ -144,7 +143,7 @@ def run(args=""):           # Not even close to being finished. This is for term
 def display(samples, kde_graph, kde_stacked, pdp_graph, cdf_graph, mds_graph, similarity_matrix, dissimilarity_matrix, likeness_matrix, ks_matrix, kuiper_matrix, cross_correlation_matrix, kde_bandwidth=10):
     pdp_data = PDP(samples, title=f"Probability Density Plot", stacked=False).plot() if pdp_graph else None
     cdf_data = CDF(samples, "Cumulative Density Function").plot() if cdf_graph else None
-    mds_data = MDS(samples, title=f"Multidimensional Scaling Plot").plot() if mds_graph else None
+    mds_data = MDS(samples, title=None).plot() if mds_graph else None
     # Replace uncertainties with our custom bandwidth
     kde_bandwidth = session.get("kde_bandwidth", kde_bandwidth)
     for sample in samples:

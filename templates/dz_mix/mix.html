@@ -6,12 +6,18 @@
 </head>
 <body>
     {% include 'global/nav.html' %}
+    {% include 'dz_mix/include/toolbar.html' %}
     <div class="container mt-5">
-    <h1 class = "text-left mb-4">Unmixing App</h1>
-        {{ data1 | safe }}
+        <div id="loading-bar">
+            <div class="spinner"></div>
+        </div>
+        {% if data1 %}
+            {{ data1 | safe }}
+        {% endif %}
     </div>
     <script src="{{ url_for('static',filename='scripts/navbar.js') }}"></script>
     <script src="{{ url_for('static',filename='scripts/stacked_switch.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/spinner.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

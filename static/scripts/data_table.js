@@ -1,20 +1,21 @@
 
 document.addEventListener('DOMContentLoaded', function () {
-    var data = [
-    ['', '', '', '', '', ''],
-    ['', '', '', '', '', ''],
-    ['', '', '', '', '', ''],
-    ['', '', '', '', '', ''],
-    ['', '', '', '', '', '']
-    ];
+    // Retrieve spreadsheet data from hidden HTML element
+    var spreadsheetDataString = document.getElementById('spreadsheetData').value;
+    console.log('Spreadsheet data string:', spreadsheetDataString);
+
+    var spreadsheetData = [];
+    if (spreadsheetDataString) {
+        spreadsheetData = JSON.parse(spreadsheetDataString);
+    }
+
     var container = document.getElementById('hot');
     var hot = new Handsontable(container, {
-        data: data,
+        data: spreadsheetData,
         licenseKey: 'non-commercial-and-evaluation',
         rowHeaders: true,
         colHeaders: true,
-        contextMenu: true,
-
+        contextMenu: true
     });
 
     document.getElementById('save').addEventListener('click', function () {

@@ -18,8 +18,8 @@ def do_monte_carlo(samples, num_trials=10000):
     top_trials = get_percent_of_array(sorted_trials, 1)
     random_configurations = [trial.random_configuration for trial in top_trials]
 
-    source_contributions = np.average(random_configurations, axis=0)
-    source_std = np.std(random_configurations, axis=0)
+    source_contributions = np.average(random_configurations, axis=0)*100
+    source_std = np.std(random_configurations, axis=0)*100
 
     contribution_table_d = build_contribution_table(source_samples, source_contributions, source_std, test_type="KS")
     return contribution_table_d, None, None

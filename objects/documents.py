@@ -18,7 +18,7 @@ class SampleSheet:
                 age = sheet.cell(row=row, column=i).value
                 uncertainty = sheet.cell(row=row, column=i + 1).value
                 if age is not None and uncertainty is not None:
-                    grains.append(Grain(age, uncertainty))
+                    grains.append(Grain(float(age), float(uncertainty)))
             sample = Sample(sample_name, grains)
             samples.append(sample)
         samples.reverse()

@@ -9,10 +9,12 @@
 </head>
 <body>
     {% include "global/nav.html" %}
-    {% include "new_interface/include/toolbar.html" %}
+    {% include "spreadsheet_editor/include/toolbar.html" %}
     <div class="container mt-5">
         <div id="hot"></div>
     </div>
+
+<input type="hidden" id="spreadsheetData" value='{{ spreadsheet_data | tojson }}' />
     <script src="{{ url_for('static',filename='scripts/data_table.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>

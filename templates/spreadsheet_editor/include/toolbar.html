@@ -1,0 +1,15 @@
+ <div style="background-color: #333333; width: 100%; height: 55px;">
+    <div class="row">
+        <div class="col-md-2">
+            <button id="load" class="mt-2 btn btn-primary">Open...</button>
+            <button id="save" class="mt-2 btn btn-primary">Save</button>
+        </div>
+        <div class="text-left col-md-3 mt-3">
+            {% if (file or 'last_uploaded_file' in session) %}
+                <h4 style="color:cyan;">Sample File: {{ session["last_uploaded_file"][33:] }}</h4>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+ <input type="file" id="fileInput" style="display: none;" accept=".xlsx">

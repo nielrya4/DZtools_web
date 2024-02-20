@@ -128,7 +128,7 @@ class PDP:
 
 
 class MDS:
-    def __init__(self, samples, title):
+    def __init__(self, samples, title=None):
         self.samples = samples
         self.title = title
 
@@ -136,34 +136,25 @@ class MDS:
         samples = self.samples
         num_samples = len(samples)
         dissimilarity_matrix = np.zeros((num_samples, num_samples))
-        sample_names = [sample.name for sample in samples]  # Extract sample names
+        sample_names = [sample.name for sample in samples]
 
         for i in range(num_samples):
-            for j in range(i+1, num_samples):
+            for j in range(i + 1, num_samples):
                 dissimilarity_matrix[i, j] = measures.dissimilarity_test(samples[i], samples[j])
                 dissimilarity_matrix[j, i] = dissimilarity_matrix[i, j]
 
-        # Classical MDS algorithm
-        n = dissimilarity_matrix.shape[0]
-        H = np.eye(n) - np.ones((n, n)) / n
-        B = -0.5 * np.dot(np.dot(H, dissimilarity_matrix ** 2), H)
+        embedding = MultidimensionalScaling(n_components=2, dissimilarity='precomputed')
+        scaled_mds_result = embedding.fit_transform(dissimilarity_matrix)
 
-        eigenvalues, eigenvectors = np.linalg.eigh(B)
-
-        # Sort eigenvalues and eigenvectors in descending order
-        indices = np.argsort(eigenvalues)[::-1]
-        eigenvalues = eigenvalues[indices]
-        eigenvectors = eigenvectors[:, indices]
-
-        # Select the top two eigenvectors
-        scaled_mds_result = np.sqrt(eigenvalues[:2]) * eigenvectors[:, :2]
-
-        # Plotting
+        viridis = plt.cm.get_cmap('gist_ncar', num_samples)
+        colors = viridis(np.linspace(0, 1, num_samples))
         fig, ax = plt.subplots(figsize=(8, 6), dpi=100)
-        scatter = ax.scatter(scaled_mds_result[:, 0], scaled_mds_result[:, 1])
+        for i, (x, y) in enumerate(scaled_mds_result):
+            ax.scatter(x, y, color=colors[i])
+            ax.text(x, y + 0.005, sample_names[i], fontsize=8, ha='center', va='center')
 
         for i, (x, y) in enumerate(scaled_mds_result):
-            ax.text(x, y + 0.005, sample_names[i], fontsize=8, ha='center', va='center')  # Adjusted placement
+            ax.text(x, y + 0.005, sample_names[i], fontsize=8, ha='center', va='center')
 
         for i in range(num_samples):
             distance = float('inf')  # Initialize distance to positive infinity
@@ -181,7 +172,9 @@ class MDS:
                 x2, y2 = scaled_mds_result[samples.index(nearest_sample)]
                 ax.plot([x1, x2], [y1, y2], 'k--', linewidth=0.5)
 
-        fig.suptitle(self.title if self.title is not None else "Multidimensional Scaling Plot")
+        stress = embedding.stress_
+
+        fig.suptitle(self.title if self.title is not None else f"Multidimensional Scaling Plot (Stress: {np.round(stress, decimals=6)})")
         fig.text(0.5, 0.01, 'Dimension 1', ha='center', va='center', fontsize=12)
         fig.text(0.01, 0.5, 'Dimension 2', va='center', rotation='vertical', fontsize=12)
         fig.tight_layout()
