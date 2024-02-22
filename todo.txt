@@ -1,3 +1,5 @@
+MDS: Make options for R^2, ks, kuiper, likeness, (already have similarity)
+
 Applications:
     In dzMix, implement kuiper and KS tests instead of just r^2. Search for quicker, more optimized functions for r^2, kde generation, and cdf generation.
     In dzStats, search for more efficient MDS function

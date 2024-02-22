@@ -1,0 +1,51 @@
+<nav class="navbar navbar-expand-lg navbar-light">
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="row">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="file_dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        File
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="file_dropdown">
+                        <button id="load" class="dropdown-item">Open</button>
+                        <button id="save" class="dropdown-item">Save</button>
+                        <a class="dropdown-item" href="#">Export...</a>
+                        <a class="dropdown-item" href="#">Preferences...</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="samples_dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        Samples
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="samples_dropdown">
+                        <a class="dropdown-item" href="#">Manage Samples...</a>
+                        <a class="dropdown-item" href="#">Unmix</a>
+                        <a class="dropdown-item" href="#">Run Script...</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="insert_dropdown">
+                        Insert
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="insert_dropdown">
+                        <div class="menu_label">Graphs</div>
+                        <a class="dropdown-item" href="#">KDE</a>
+                        <a class="dropdown-item" href="#">PDP</a>
+                        <a class="dropdown-item" href="#">CDF</a>
+                        <a class="dropdown-item" href="#">MDS</a>
+                        <div class="menu_label">Matrices</div>
+                        <a class="dropdown-item" href="#">KS</a>
+                        <a class="dropdown-item" href="#">Kuiper</a>
+                        <a class="dropdown-item" href="#">R^2</a>
+                        <a class="dropdown-item" href="#">Similarity</a>
+                        <a class="dropdown-item" href="#">Dissimilarity</a>
+                        <a class="dropdown-item" href="#">Likeness</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<input type="file" id="fileInput" style="display: none;" accept=".xlsx">

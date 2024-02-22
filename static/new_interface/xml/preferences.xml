@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<root>
+    <unmix>
+        <method>r2</method>
+        <trials>10000</trials>
+        <percent>1</percent>
+        <outputs>
+            <trials_graph>True</trials_graph>
+            <contribution_table>True</contribution_table>
+            <contribution_graph>True</contribution_graph>
+        </outputs>
+    </unmix>
+    <stats>
+        <kde>
+            <stacked>False</stacked>
+            <bandwidth>10</bandwidth>
+        </kde>
+        <pdp>
+            <stacked>False</stacked>
+        </pdp>
+        <mds>
+            <method>similarity</method>
+        </mds>
+    </stats>
+</root>

@@ -1,0 +1,57 @@
+
+        html, body {
+            height: 100%;
+        }
+
+        .panes-container {
+            display: flex;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .left-pane {
+            width: 50%;
+            background: black;
+            overflow-x: scroll;
+            overflow-y: scroll;
+        }
+
+        .panes-separator {
+            width: 0.5%;
+            background: #0090f5;
+            position: relative;
+            cursor: col-resize;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            z-index: 1000;
+        }
+
+        .right-pane {
+            flex: auto;
+            background: black;
+            z-index: 1000;
+            overflow-x: scroll;
+            overflow-y: scroll;
+        }
+
+        .panes-container,
+        .panes-separator,
+        .left-pane,
+        .right-pane {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+        .left-pane::-webkit-scrollbar,
+        .right-pane::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .left-pane,
+        .right-pane{
+          -ms-overflow-style: none;  /* IE and Edge */
+          scrollbar-width: none;  /* Firefox */
+        }
+
