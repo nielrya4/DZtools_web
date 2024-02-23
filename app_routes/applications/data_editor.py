@@ -27,7 +27,7 @@ def register(app):
         else:
             # If no file uploaded, create a 5x5 array with all cells set to None
             spreadsheet_data = [[None for _ in range(6)] for _ in range(6)]
-        return render_template('new_interface/new_interface.html', spreadsheet_data=spreadsheet_data)
+        return render_template('data_editor/data_editor.html', spreadsheet_data=spreadsheet_data)
 
     @app.route('/json/save', methods=['POST'])
     def json_save():

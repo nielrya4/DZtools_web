@@ -27,10 +27,6 @@ cleanup.start_cleanup()
 def main():
     return render_template('index.html')
 
-@app.route('/home/')
-def main2():
-    return render_template('new_interface/new_interface.html')
-
 
 if __name__ == '__main__':
     cleanup.cleanup_job()
