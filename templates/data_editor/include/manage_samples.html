@@ -1,0 +1,30 @@
+<style>
+    .select-box {
+        width: 200px;
+        height: 150px;
+    }
+</style>
+
+<div id="backstore" style="display: none">
+    <div style="color:black" id="manage_samples_content">
+        <h1>Sample Management</h1>
+
+        <label for="loaded_samples">Loaded Samples</label>
+        <select id="loaded_samples" class="select-box" multiple name="loaded_samples">
+            {% for sample in loaded_samples %}
+                <option value="{{ sample.name }}">{{ sample.name }}</option>
+            {% endfor %}
+        </select>
+
+        <br />
+        <button type="submit" formaction="/activate">Activate Sample</button>
+        <br />
+
+        <label for="active_samples">Active Samples</label>
+        <select id="active_samples" class="select-box" multiple disabled>
+            {% for sample in active_samples %}
+                <option value="{{ sample.name }}">{{ sample.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>

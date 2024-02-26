@@ -1,9 +1,9 @@
 import os
 from io import BytesIO
 from flask import session, redirect, flash, request, send_from_directory, send_file, url_for
-from utils import files, kde_utils, graph_utils
-from objects.graphs import KDE, CDF, PDP, MDS
-from objects.documents import SampleSheet
+from lib.utils import files, graph_utils, kde_utils
+from lib.objects.graphs import KDE, CDF, PDP, MDS
+from lib.objects.documents import SampleSheet
 import app as APP
 
 
@@ -146,3 +146,8 @@ def register(app):
     def test_data_img():
         return send_from_directory(os.path.join(app.root_path, 'static'),
                                    'global/static/menu.jpg', mimetype='image/jpeg')
+
+    @app.route('/uploads/<filename>')
+    # change this to the data or graphs folder sometime
+    def uploaded_file(filename):
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)

@@ -1,8 +1,7 @@
 # measures.py by Kurt Sundell. Interpreted by Ryan Nielsen to work directly with detrital zircon samples.
 import numpy as np
-from utils.cdf_utils import cdf_function
-from utils import kde_utils
-from objects.zircon import Sample, Grain
+from lib.utils.cdf_utils import cdf_function
+from lib.utils import kde_utils
 
 
 # KS Test (Massey, 1951) is the max absolute difference btw 2 CDF curves

@@ -1,6 +1,7 @@
 import openpyxl
-from objects.zircon import Sample, Grain
-from utils import sample_utils
+from lib.objects.zircon import Sample, Grain
+from lib.utils import sample_utils
+
 
 class SampleSheet:
     def __init__(self, file):

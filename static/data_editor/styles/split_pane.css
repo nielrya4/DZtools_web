@@ -1,6 +1,7 @@
 
         html, body {
             height: 100%;
+            overflow: hidden; /* Hide scrollbars */
         }
 
         .panes-container {
@@ -11,7 +12,7 @@
 
         .left-pane {
             width: 50%;
-            background: black;
+            background: linear-gradient(to bottom, #000000, #003060);
             overflow-x: scroll;
             overflow-y: scroll;
         }
@@ -29,7 +30,7 @@
 
         .right-pane {
             flex: auto;
-            background: black;
+            background: linear-gradient(to bottom, #000000, #003060);
             z-index: 1000;
             overflow-x: scroll;
             overflow-y: scroll;
@@ -44,7 +45,7 @@
             height: 100%;
         }
         .left-pane::-webkit-scrollbar,
-        .right-pane::-webkit-scrollbar {
+        .right-pane::-webkit-scrollbar{
             display: none;
         }
 

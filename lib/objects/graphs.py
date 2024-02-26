@@ -1,12 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from utils.kde_utils import kde_function
-from utils.pdp_utils import pdp_function
-from utils.cdf_utils import cdf_function
-from utils import measures
+from lib.utils.kde_utils import kde_function
+from lib.utils.pdp_utils import pdp_function
+from lib.utils.cdf_utils import cdf_function
+from lib.utils import measures
 from sklearn.manifold import MDS as MultidimensionalScaling
-from utils.graph_utils import download_graph, plot_graph, get_x_max, get_x_min
-from scipy.spatial.distance import squareform, pdist
+from lib.utils.graph_utils import download_graph, plot_graph, get_x_max, get_x_min
 
 
 class KDE:
@@ -50,7 +49,7 @@ class KDE:
 
     def plot(self):
         fig = self.__plot()
-        return plot_graph(fig)
+        return plot_graph(fig, filename="KDE")
 
     def download(self, file_name, file_format):
         fig = self.__plot()
@@ -75,7 +74,7 @@ class CDF:
 
     def plot(self):
         fig = self.__plot()
-        return plot_graph(fig)
+        return plot_graph(fig, filename="CDF")
 
     def download(self, file_name, file_format):
         fig = self.__plot()
@@ -120,7 +119,7 @@ class PDP:
 
     def plot(self):
         fig = self.__plot()
-        return plot_graph(fig)
+        return plot_graph(fig, filename="PDP")
 
     def download(self, file_name, file_format):
         fig = self.__plot()
@@ -182,7 +181,7 @@ class MDS:
 
     def plot(self):
         fig = self.__plot()
-        return plot_graph(fig)
+        return plot_graph(fig, filename="MDS")
 
     def download(self, file_name, file_format):
         fig = self.__plot()

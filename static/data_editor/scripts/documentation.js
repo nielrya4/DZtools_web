@@ -6,7 +6,7 @@ documentation.addEventListener('click',()=>{
         class: ["no-full"],
         width:'400px',
         height:'400px',
-        background: 'lightslategray',
+        background: '#003060',
         top:50,
         right:50,
         bottom:50,

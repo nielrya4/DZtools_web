@@ -1,8 +1,8 @@
 import os
-from flask import render_template, session, request, flash, redirect, url_for
+from flask import render_template, session, request, flash, redirect
 import app as APP
-from objects.documents import SampleSheet
-from utils import dz_script, files
+from lib.objects.documents import SampleSheet
+from lib.utils import files, dz_script
 
 
 def register(app):

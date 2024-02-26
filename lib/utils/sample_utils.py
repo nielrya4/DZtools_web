@@ -1,4 +1,4 @@
-from objects.zircon import Sample, Grain
+from lib.objects.zircon import Sample, Grain
 
 
 def create_mixed_sample(samples):

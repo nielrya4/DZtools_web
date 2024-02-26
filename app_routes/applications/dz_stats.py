@@ -2,10 +2,10 @@ import os
 from flask import render_template, request, session, flash
 from werkzeug.utils import secure_filename
 from werkzeug.datastructures import FileStorage
-from utils import files, kde_utils
+from lib.utils import files, kde_utils
 import app as APP
-from objects.documents import SampleSheet
-from objects.graphs import KDE, CDF, PDP, MDS
+from lib.objects.documents import SampleSheet
+from lib.objects.graphs import KDE, CDF, PDP, MDS
 
 
 def register(app):
@@ -42,10 +42,6 @@ def register(app):
                 sample_sheet = SampleSheet(file)
                 samples = sample_sheet.read_samples()
 
-                session_key = session.get('SECRET_KEY', APP.SECRET_KEY)
-                filename = f"{session_key}all_data.pkl"
-                filepath = os.path.join(app.config['DATA_FOLDER'], filename)
-                files.save_data_to_file(samples, filepath)
                 results = display(samples,
                                   kde_graph=kde_graph,
                                   kde_stacked=kde_stacked,
@@ -152,9 +148,7 @@ def display(samples, kde_graph, kde_stacked, pdp_graph, cdf_graph, mds_graph, si
 
     row_labels = [sample.name for sample in samples]
     col_labels = [sample.name for sample in samples]
-    # It's worth noting here that the likeness, similarity, dissimilarity, and cross-correlation matrices will run
-    # off of the bandwidth used for the KDE plot. TODO: Toggle PDP mode OR KDE mode and form the matrices appropriately.
-    # TODO: Implement relative source contribution matrices
+
     if similarity_matrix:
         similarity_data = files.generate_matrix(samples,
                                                 row_labels=row_labels,
@@ -165,9 +159,9 @@ def display(samples, kde_graph, kde_stacked, pdp_graph, cdf_graph, mds_graph, si
 
     if dissimilarity_matrix:
         dissimilarity_data = files.generate_matrix(samples,
-                                                row_labels=row_labels,
-                                                col_labels=col_labels,
-                                                matrix_type="dissimilarity")
+                                                   row_labels=row_labels,
+                                                   col_labels=col_labels,
+                                                   matrix_type="dissimilarity")
     else:
         dissimilarity_data = None
 

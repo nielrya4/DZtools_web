@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+
     document.getElementById('load').addEventListener('click', function () {
             document.getElementById('fileInput').click();
     });
@@ -63,12 +64,27 @@ document.addEventListener('DOMContentLoaded', function () {
                 row.push('');
             }
         }
-
         // Load Excel data into HandsOnTable
         hot.loadData(excelData);
         console.log('Data loaded from Excel:', excelData);
+        //Save the file
+        var jsonData = {data: hot.getData()};
+        fetch('/json/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsonData)
+        }).then(response => {
+            if (response.ok) {
+                console.log('Data saved successfully');
+            } else {
+                console.error('Error saving data');
+            }
+        }).catch(error => {
+            console.error('Error saving data:', error);
+        });
     };
-
     reader.readAsArrayBuffer(file);
 });
 });

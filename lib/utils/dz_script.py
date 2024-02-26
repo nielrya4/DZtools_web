@@ -1,6 +1,5 @@
-from objects.graphs import KDE, MDS, PDP, CDF
-from utils.files import generate_matrix
-from utils import sample_utils
+from lib.objects.graphs import KDE, MDS, PDP, CDF
+from lib.utils.files import generate_matrix
 
 
 def run(script_file, samples):
@@ -32,32 +31,38 @@ def run(script_file, samples):
             elif cmd == "mds":
                 items.append(MDS(active_samples, "Multidimensional Scaling Plot").plot())
             elif cmd == "sim":
-                items.append(generate_matrix(adjusted_samples,
+                header = "<h5>Similarity Matrix</h5>"
+                items.append(header + generate_matrix(adjusted_samples,
                                             row_labels=row_labels,
                                             col_labels=col_labels,
                                             matrix_type="similarity").to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">'))
             elif cmd == "dis":
-                items.append(generate_matrix(adjusted_samples,
+                header = "<h5>Dissimilarity Matrix</h5>"
+                items.append(header + generate_matrix(adjusted_samples,
                                             row_labels=row_labels,
                                             col_labels=col_labels,
                                             matrix_type="dissimilarity").to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">'))
             elif cmd == "lik":
-                items.append(generate_matrix(adjusted_samples,
+                header = "<h5>Likeness Matrix</h5>"
+                items.append(header + generate_matrix(adjusted_samples,
                                             row_labels=row_labels,
                                             col_labels=col_labels,
                                             matrix_type="likeness").to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">'))
             elif cmd == "ks":
-                items.append(generate_matrix(adjusted_samples,
+                header = "<h5>KS Test Matrix</h5>"
+                items.append(header + generate_matrix(adjusted_samples,
                                             row_labels=row_labels,
                                             col_labels=col_labels,
                                             matrix_type="ks").to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">'))
             elif cmd == "kpr":
-                items.append(generate_matrix(adjusted_samples,
+                header = "<h5>Kuiper Test Matrix</h5>"
+                items.append(header + generate_matrix(adjusted_samples,
                                             row_labels=row_labels,
                                             col_labels=col_labels,
                                             matrix_type="kuiper").to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">'))
             elif cmd == "ccr":
-                items.append(generate_matrix(adjusted_samples,
+                header = "<h5>Cross-Correlation Matrix</h5>"
+                items.append(header + generate_matrix(adjusted_samples,
                                             row_labels=row_labels,
                                             col_labels=col_labels,
                                             matrix_type="cross_correlation").to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">'))
@@ -70,10 +75,6 @@ def run(script_file, samples):
                     for arg in args:
                         if arg == "all":
                             active_samples = samples.copy()
-                        elif arg == "mixed":
-                            active_samples.append(sample_utils.create_mixed_sample(samples))
-                        elif arg == "mean":
-                            active_samples.append(sample_utils.create_mean_sample(samples))
                         elif arg in [sample.name for sample in samples] and arg not in [active_sample.name for active_sample in active_samples]:
                             for sample in samples:
                                 if arg == sample.name:

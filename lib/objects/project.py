@@ -1,4 +1,4 @@
-from utils.dz_script import run
+from lib.utils.dz_script import run
 
 
 class Project:

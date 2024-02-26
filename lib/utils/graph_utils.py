@@ -1,6 +1,9 @@
+import os.path
 from io import BytesIO
-from flask import Response
+from flask import Response, url_for
 import matplotlib.pyplot as plt
+
+import app
 
 
 def download_graph(fig, file_name, file_format):
@@ -21,13 +24,14 @@ def download_graph(fig, file_name, file_format):
                     headers={'Content-Disposition': f'attachment;filename={file_name}'})
 
 
-def plot_graph(fig):
+def plot_graph(fig, filename="graph"):
     image_buffer = BytesIO()
     fig.savefig(image_buffer, format="svg", bbox_inches="tight")
+    fig.savefig(os.path.join(app.UPLOAD_FOLDER, filename + ".svg"), format="svg", bbox_inches="tight")
     image_buffer.seek(0)
     plotted_kde = image_buffer.getvalue().decode("utf-8")
     plt.close(fig)
-    return f"<div>{plotted_kde}</div>"
+    return f"<div>{plotted_kde}<br /><h6>Download Graph (<a href='/uploads/{filename}.svg' download>{filename}.svg</a>)</h6></div>"
 
 
 def get_x_max(samples):

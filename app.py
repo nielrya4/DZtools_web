@@ -1,6 +1,6 @@
 import os
 import secrets
-from utils import cleanup, routes
+from lib.utils import routes, cleanup
 from flask import Flask, render_template
 
 

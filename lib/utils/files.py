@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 import os
 import app
-from utils import measures
+from lib.utils import measures
 import pickle
 from werkzeug.utils import secure_filename
-from objects.documents import SampleSheet
+from lib.objects.documents import SampleSheet
 
 ALLOWED_EXTENSIONS = {'xlsx', 'xls'}
 
@@ -68,7 +68,7 @@ def generate_matrix(samples, row_labels=None, col_labels=None, matrix_type="simi
 
 def save_data_to_file(data, filepath):
     with open(filepath, 'wb') as file:
-        pickle.dump(data, file)
+        file.writelines(data)
 
 
 def read_data_from_file(filepath):

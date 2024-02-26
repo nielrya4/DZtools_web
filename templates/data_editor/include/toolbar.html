@@ -4,43 +4,40 @@
         <div class="row">
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="file_dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        File
-                    </a>
+                    <a class="nav-link dropdown-toggle" href="#" id="file_dropdown">File</a>
                     <div class="dropdown-menu" aria-labelledby="file_dropdown">
-                        <button id="load" class="dropdown-item">Open</button>
-                        <button id="save" class="dropdown-item">Save</button>
-                        <a class="dropdown-item" href="#">Export...</a>
-                        <a class="dropdown-item" href="#">Preferences...</a>
+                        <a id="load" class="dropdown-item" href="#">Upload...</a>
+                        <a id="save" class="dropdown-item" href="#">Save to Server</a>
+                        <a id="download" class="dropdown-item" href="#">Download...</a>
+                        <a id="preferences" class="dropdown-item" href="#" >Preferences...</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="samples_dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                        Samples
-                    </a>
+                    <a class="nav-link dropdown-toggle" href="#" id="samples_dropdown">Samples</a>
                     <div class="dropdown-menu" aria-labelledby="samples_dropdown">
-                        <a class="dropdown-item" href="#">Manage Samples...</a>
-                        <a class="dropdown-item" href="#">Unmix</a>
-                        <a class="dropdown-item" href="#">Run Script...</a>
+                        <a id="manage_samples" class="dropdown-item" href="#">Manage Samples...</a>
+                        <a id="unmix" class="dropdown-item" href="#">Unmix</a>
+                        <a id="run_script" class="dropdown-item" href="#">Run Script...</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="insert_dropdown">
-                        Insert
-                    </a>
+                    <a class="nav-link dropdown-toggle" href="#" id="insert_dropdown">Outputs</a>
                     <div class="dropdown-menu" aria-labelledby="insert_dropdown">
-                        <div class="menu_label">Graphs</div>
-                        <a class="dropdown-item" href="#">KDE</a>
-                        <a class="dropdown-item" href="#">PDP</a>
-                        <a class="dropdown-item" href="#">CDF</a>
-                        <a class="dropdown-item" href="#">MDS</a>
-                        <div class="menu_label">Matrices</div>
-                        <a class="dropdown-item" href="#">KS</a>
-                        <a class="dropdown-item" href="#">Kuiper</a>
-                        <a class="dropdown-item" href="#">R^2</a>
-                        <a class="dropdown-item" href="#">Similarity</a>
-                        <a class="dropdown-item" href="#">Dissimilarity</a>
-                        <a class="dropdown-item" href="#">Likeness</a>
+                        <form method="post" action="/data_editor/" enctype="multipart/form-data" id="output_form">
+                            <button id="generate_outputs" type="submit" class="dropdown-item">Generate Outputs</button>
+                            <div class="menu_label">Graphs</div>
+                            <label class="dropdown-item"><input type="checkbox" name="kde_graph" value="true" {% if kde_graph %}checked{% endif %}> KDE Graph</label>
+                            <label class="dropdown-item"><input type="checkbox" name="pdp_graph" value="true" {% if pdp_graph %}checked{% endif %}> PDP Graph</label>
+                            <label class="dropdown-item"><input type="checkbox" name="cdf_graph" value="true" {% if cdf_graph %}checked{% endif %}> CDF Graph</label>
+                            <label class="dropdown-item"><input type="checkbox" name="mds_graph" value="true" {% if mds_graph %}checked{% endif %}> MDS Graph</label>
+                            <div class="menu_label">Matrices</div>
+                            <label class="dropdown-item"><input type="checkbox" name="similarity_matrix" value="true" {% if similarity_matrix %}checked{% endif %}> Similarity Matrix</label>
+                            <label class="dropdown-item"><input type="checkbox" name="dissimilarity_matrix" value="true" {% if dissimilarity_matrix %}checked{% endif %}> Dissimilarity Matrix</label>
+                            <label class="dropdown-item"><input type="checkbox" name="likeness_matrix" value="true" {% if likeness_matrix %}checked{% endif %}> Likeness Matrix</label>
+                            <label class="dropdown-item"><input type="checkbox" name="ks_matrix" value="true" {% if ks_matrix %}checked{% endif %}> KS Matrix</label>
+                            <label class="dropdown-item"><input type="checkbox" name="kuiper_matrix" value="true" {% if kuiper_matrix %}checked{% endif %}> Kuiper Matrix</label>
+                            <label class="dropdown-item"><input type="checkbox" name="cross_correlation_matrix" value="true" {% if cross_correlation_matrix %}checked{% endif %}> Cross-Correlation Matrix</label>
+                        </form>
                     </div>
                 </li>
             </ul>

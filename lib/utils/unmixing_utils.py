@@ -1,7 +1,6 @@
-from objects.trials import UnmixingTrial
+from lib.objects.trials import UnmixingTrial
 import numpy as np
 import pandas as pd
-import math
 
 
 def do_monte_carlo(samples, num_trials=10000):

@@ -1,1 +1,11 @@
 <h5 class="mt-2">Outputs</h5>
+
+{% if output_items is not none %}
+    {% for item in output_items %}
+        <div style="margin-left: 10px;">{{item | safe}}</div>
+        <br />
+    {% endfor %}
+{% endif %}
+
+<br />
+<br />
