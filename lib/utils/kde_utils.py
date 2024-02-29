@@ -3,25 +3,34 @@ from sklearn.neighbors import KernelDensity
 
 
 def kde_function(sample, num_steps=1000, x_min=0, x_max=4000):
+    grains = sample.grains
+
+    # Precompute bandwidth
+    bandwidths = np.abs([grain.uncertainty for grain in grains])
+    mean_bandwidth = np.mean(bandwidths)
+
+    # Vectorized extraction of ages
+    ages = np.array([grain.age for grain in grains])
+
+    # Generate x values
     x = np.linspace(x_min, x_max, num_steps).reshape(-1, 1)
-    ages = np.array([grain.age for grain in sample.grains]).reshape(-1, 1)
-    bandwidths = np.array([np.abs(grain.uncertainty) for grain in sample.grains])
 
-    kde = KernelDensity(bandwidth=np.mean(bandwidths), kernel='gaussian')
-    kde.fit(ages)
+    # Fit KDE
+    kde = KernelDensity(bandwidth=mean_bandwidth, kernel='gaussian')
+    kde.fit(ages.reshape(-1, 1))
 
+    # Score samples
     log_dens = kde.score_samples(x)
     y = np.exp(log_dens)
 
-    return x.flatten(), y / np.sum(y)
+    # Normalize
+    y_normalized = y / np.sum(y)
+
+    return x.flatten(), y_normalized
 
 
 def get_y_values(sample):
-    y = []
-    try:
-        x, y = kde_function(sample)
-    except ValueError as e:
-        print(f"{e}")
+    x, y = kde_function(sample)
     return y
 
 

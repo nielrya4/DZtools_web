@@ -1,17 +1,25 @@
 from lib.objects.trials import UnmixingTrial
 import numpy as np
 import pandas as pd
+from lib.utils import kde_utils
 
 
 def do_monte_carlo(samples, num_trials=10000):
     samples.reverse()
     sink_sample = samples[0]
     source_samples = samples[1:]
-    trials = []
+    trials = [None] * num_trials
 
-    for i in range(num_trials):
-        trial = UnmixingTrial(sink_sample, source_samples)
-        trials.append(trial)
+    sink_sample.replace_bandwidth(10)
+    for source_sample in source_samples:
+        source_sample.replace_bandwidth(10)
+
+    sink_kde = kde_utils.get_y_values(sink_sample)
+    source_kdes = [kde_utils.get_y_values(source_sample) for source_sample in source_samples]
+
+    for i in range(0, num_trials):
+        trial = UnmixingTrial(sink_kde, source_kdes)
+        trials[i] = trial
 
     sorted_trials = sorted(trials, key=lambda x: x.d_val, reverse=True)
     top_trials = get_percent_of_array(sorted_trials, 1)

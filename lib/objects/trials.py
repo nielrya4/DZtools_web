@@ -1,13 +1,13 @@
-from lib.utils import kde_utils
+from lib.utils import kde_utils, cdf_utils
 from sklearn.metrics import r2_score
 import numpy as np
 import random
 
 
 class UnmixingTrial:
-    def __init__(self, sink_sample, source_samples):
-        self.sink_sample = sink_sample
-        self.source_samples = source_samples
+    def __init__(self, sink_kde, source_kdes):
+        self.sink_kde = sink_kde
+        self.source_kdes = source_kdes
         rands, d_val, v_val, r2_val = self.__do_trial()
         self.random_configuration = rands
         self.d_val = d_val
@@ -15,26 +15,19 @@ class UnmixingTrial:
         self.r2_val = r2_val
 
     def __do_trial(self):
-        sink_sample = self.sink_sample
-        source_samples = self.source_samples
+        sink_kde = self.sink_kde
+        source_kdes = self.source_kdes
 
-        sink_sample.replace_bandwidth(10)
-        for source_sample in source_samples:
-            source_sample.replace_bandwidth(10)
-
-        sink_cdf = kde_utils.get_y_values(sink_sample)
-        source_cdfs = [kde_utils.get_y_values(source_sample) for source_sample in source_samples]
-
-        num_sources = len(source_samples)
+        num_sources = len(source_kdes)
         rands = self.__make_cumulative_random(num_sources)
 
-        model_cdf = np.zeros_like(sink_cdf)
-        for j, source_cdf in enumerate(source_cdfs):
+        model_kde = np.zeros_like(sink_kde)
+        for j, source_kde in enumerate(source_kdes):
             scale_weight = rands[j]
-            for k in range(len(sink_cdf)):
-                model_cdf[k] += source_cdf[k] * scale_weight
+            for k in range(len(sink_kde)):
+                model_kde[k] += source_kde[k] * scale_weight
 
-        d_val = self.__r2(sink_cdf, model_cdf)
+        d_val = self.__r2(sink_kde, model_kde)
         v_val = None
         r2_val = None
         return rands, d_val, v_val, r2_val
