@@ -15,7 +15,7 @@ def register(app):
             sample_sheet = SampleSheet(file)
             samples = sample_sheet.read_samples()
 
-            data1, data2, data3 = unmixing_utils.do_monte_carlo(samples, num_trials=1000)
+            data1, data2, data3 = unmixing_utils.do_monte_carlo(samples, num_trials=10000)
             results = render_template('dz_mix/mix.html',
                                       data1=data1)
         return results
