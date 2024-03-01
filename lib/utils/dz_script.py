@@ -33,7 +33,7 @@ def run(script_file, samples):
             elif cmd == "mds":
                 items.append(MDS(active_samples, "Multidimensional Scaling Plot").plot())
             elif cmd == "unmix":
-                data1, _, _ = unmixing_utils.do_monte_carlo(active_samples, num_trials=10000)
+                data1, _, _ = unmixing_utils.do_monte_carlo(active_samples, num_trials=1000)
                 items.append(data1)
             elif cmd == "sim":
                 header = "<h5>Similarity Matrix</h5>"
