@@ -16,7 +16,6 @@
                     <a class="nav-link dropdown-toggle" href="#" id="samples_dropdown">Samples</a>
                     <div class="dropdown-menu" aria-labelledby="samples_dropdown">
                         <a id="manage_samples" class="dropdown-item" href="#">Manage Samples...</a>
-                        <a id="unmix" class="dropdown-item" href="#">Unmix</a>
                         <a id="run_script" class="dropdown-item" href="#">Run Script...</a>
                     </div>
                 </li>
@@ -37,6 +36,7 @@
                             <label class="dropdown-item"><input type="checkbox" name="ks_matrix" value="true" {% if ks_matrix %}checked{% endif %}> KS Matrix</label>
                             <label class="dropdown-item"><input type="checkbox" name="kuiper_matrix" value="true" {% if kuiper_matrix %}checked{% endif %}> Kuiper Matrix</label>
                             <label class="dropdown-item"><input type="checkbox" name="cross_correlation_matrix" value="true" {% if cross_correlation_matrix %}checked{% endif %}> Cross-Correlation Matrix</label>
+                            <label class="dropdown-item"><input type="checkbox" name="unmix" value="true" {% if unmix %}checked{% endif %}> Unmix</label>
                         </form>
                     </div>
                 </li>

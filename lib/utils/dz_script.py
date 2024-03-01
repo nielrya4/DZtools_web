@@ -1,5 +1,6 @@
 from lib.objects.graphs import KDE, MDS, PDP, CDF
 from lib.utils.files import generate_matrix
+from lib.utils import unmixing_utils
 
 
 def run(script_file, samples):
@@ -9,7 +10,8 @@ def run(script_file, samples):
 
     commands = ["kde", "pdp", "cdf", "mds", "sim",
                 "dis", "lik", "ks", "kpr", "ccr",
-                "load", "purge", "stacked", "unstacked"]
+                "load", "purge", "stacked", "unstacked",
+                "unmix"]
     bandwidth = 10
 
     stacked = False
@@ -30,6 +32,9 @@ def run(script_file, samples):
                 items.append(CDF(active_samples, "Cumulative Distribution Function").plot())
             elif cmd == "mds":
                 items.append(MDS(active_samples, "Multidimensional Scaling Plot").plot())
+            elif cmd == "unmix":
+                data1, _, _ = unmixing_utils.do_monte_carlo(active_samples, num_trials=10000)
+                items.append(data1)
             elif cmd == "sim":
                 header = "<h5>Similarity Matrix</h5>"
                 items.append(header + generate_matrix(adjusted_samples,

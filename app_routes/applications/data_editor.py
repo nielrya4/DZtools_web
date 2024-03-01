@@ -21,6 +21,8 @@ def register(app):
         cdf_graph = request.form.get('cdf_graph') == "true"
         mds_graph = request.form.get('mds_graph') == "true"
 
+        unmix = request.form.get('unmix') == "true"
+
         similarity_matrix = request.form.get('similarity_matrix') == "true"
         dissimilarity_matrix = request.form.get('dissimilarity_matrix') == "true"
         likeness_matrix = request.form.get('likeness_matrix') == "true"
@@ -82,6 +84,8 @@ def register(app):
             kuiper_matrix = request.form.get('kuiper_matrix') == "true"
             cross_correlation_matrix = request.form.get('cross_correlation_matrix') == "true"
 
+            unmix = request.form.get('unmix') == "true"
+
             clear_script_file(file)
             update_script_file(file, "load $all")
 
@@ -95,6 +99,8 @@ def register(app):
                 update_script_file(file, "cdf")
             if mds_graph:
                 update_script_file(file, "mds")
+            if unmix:
+                update_script_file(file, "unmix")
             if similarity_matrix:
                 update_script_file(file, "sim")
             if dissimilarity_matrix:
@@ -128,6 +134,7 @@ def register(app):
                                pdp_graph=pdp_graph,
                                cdf_graph=cdf_graph,
                                mds_graph=mds_graph,
+                               unmix=unmix,
                                similarity_matrix=similarity_matrix,
                                dissimilarity_matrix=dissimilarity_matrix,
                                likeness_matrix=likeness_matrix,
