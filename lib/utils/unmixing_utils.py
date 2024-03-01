@@ -46,5 +46,7 @@ def build_contribution_table(samples, percent_contributions, standard_deviation,
         f"% Contribution ({test_type} test)": percent_contributions,
         "Standard Deviation": standard_deviation
     }
-    df = pd.DataFrame(data).to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')
-    return df
+    df = pd.DataFrame(data)
+    df.columns.name = "-"
+    output = df.to_html(classes="table table-bordered table-striped", justify="center").replace('<th>','<th style = "background-color: White;">').replace('<td>','<td style = "background-color: White;">')
+    return output
