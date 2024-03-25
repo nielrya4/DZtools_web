@@ -100,7 +100,7 @@ def register(app):
         elif download_format == 'csv':
             excel_data.to_csv(excel_buffer, index=True, header=True)
             mimetype = 'text/csv'
-            download_name = f'{matrix_type}_scores.csv'
+            download_name = f'{matrix_type}_sc`ores.csv'
         else:
             return "Invalid format specified", 400
 

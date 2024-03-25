@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project name="my_project">
+    <data>
+        <sample name="sample1">
+            <age>50</age>
+            <uncertainty>5</uncertainty>
+        </sample>
+    </data>
+    <outputs>
+        <graph name="kde1" type="kde" stacked="false">
+            sample1
+            sample2
+            sample3
+        </graph>
+    </outputs>
+</project>

@@ -7,8 +7,6 @@ from lib.objects.documents import SampleSheet
 from lib.utils import dz_script, files
 
 
-
-
 def register(app):
     @app.route('/data_editor/', methods=['GET', 'POST'])
     def data_editor():

@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', function () {
         rowHeaders: true,
         colHeaders: true,
         contextMenu: true,
+        renderAllRows: false,
+        renderAllColumns: false,
         formulas: {
             engine: HyperFormula
         }
@@ -78,9 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var jsonData = {data: hot.getData()};
         fetch('/json/save', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(jsonData)
         }).then(response => {
             if (response.ok) {

@@ -1,28 +1,21 @@
 <nav class="navbar navbar-expand-lg navbar-light">
-
     <div class="collapse navbar-collapse" id="navbarNav">
         <div class="row">
-            <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="file_dropdown">File</a>
-                    <div class="dropdown-menu" aria-labelledby="file_dropdown">
-                        <a id="load" class="dropdown-item" href="#">Upload...</a>
-                        <a id="save" class="dropdown-item" href="#">Save to Server</a>
-                        <a id="download" class="dropdown-item" href="#">Download...</a>
-                        <a id="preferences" class="dropdown-item" href="#" >Preferences...</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="samples_dropdown">Samples</a>
-                    <div class="dropdown-menu" aria-labelledby="samples_dropdown">
-                        <a id="manage_samples" class="dropdown-item" href="#">Manage Samples...</a>
-                        <a id="run_script" class="dropdown-item" href="#">Run Script...</a>
-                    </div>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="insert_dropdown">Outputs</a>
-                    <div class="dropdown-menu" aria-labelledby="insert_dropdown">
-                        <form method="post" action="/data_editor/" enctype="multipart/form-data" id="output_form">
+            <form method="post" action="/data_editor" enctype="multipart/form-data" id="output_form">
+                <ul class="navbar-nav" style="margin-right: 125px;">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="samples_dropdown">dzMix</a>
+                        <div class="dropdown-menu" aria-labelledby="samples_dropdown">
+                            <div class="menu_label">Graphs</div>
+                            <label class="dropdown-item"><input type="checkbox" name="unmix" value="true" {% if unmix %}checked{% endif %}> Sink and Top Trials</label>
+                            <label class="dropdown-item"><input type="checkbox" name="unmix" value="true" {% if unmix %}checked{% endif %}> Relative Contribution</label>
+                            <div class="menu_label">Matrices</div>
+                            <label class="dropdown-item"><input type="checkbox" name="unmix" value="true" {% if unmix %}checked{% endif %}> Relative Contribution</label>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="insert_dropdown">dzStats</a>
+                        <div class="dropdown-menu" aria-labelledby="insert_dropdown">
                             <button id="generate_outputs" type="submit" class="dropdown-item">Generate Outputs</button>
                             <div class="menu_label">Graphs</div>
                             <label class="dropdown-item"><input type="checkbox" name="kde_graph" value="true" {% if kde_graph %}checked{% endif %}> KDE Graph</label>
@@ -36,13 +29,11 @@
                             <label class="dropdown-item"><input type="checkbox" name="ks_matrix" value="true" {% if ks_matrix %}checked{% endif %}> KS Matrix</label>
                             <label class="dropdown-item"><input type="checkbox" name="kuiper_matrix" value="true" {% if kuiper_matrix %}checked{% endif %}> Kuiper Matrix</label>
                             <label class="dropdown-item"><input type="checkbox" name="cross_correlation_matrix" value="true" {% if cross_correlation_matrix %}checked{% endif %}> Cross-Correlation Matrix</label>
-                            <label class="dropdown-item"><input type="checkbox" name="unmix" value="true" {% if unmix %}checked{% endif %}> Unmix</label>
-                        </form>
-                    </div>
-                </li>
-            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </form>
         </div>
     </div>
 </nav>
 
-<input type="file" id="fileInput" style="display: none;" accept=".xlsx">

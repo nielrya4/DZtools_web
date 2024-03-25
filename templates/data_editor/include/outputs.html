@@ -1,11 +1,13 @@
-<h5 class="mt-2">Outputs</h5>
-
-{% if output_items is not none %}
-    {% for item in output_items %}
-        <div style="margin-left: 10px;">{{item | safe}}</div>
-        <br />
-    {% endfor %}
-{% endif %}
+{% include "data_editor/include/toolbars/outputs_toolbar.html" %}
+<br />
+<div style="overflow-x: hidden;">
+    {% if output_items is not none %}
+        {% for item in output_items %}
+            <div style="margin-left: 10px;">{{item | safe}}</div>
+            <br />
+        {% endfor %}
+    {% endif %}
+</div>
 
 <br />
 <br />

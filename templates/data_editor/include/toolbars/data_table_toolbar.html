@@ -1,0 +1,27 @@
+<nav class="navbar navbar-expand-lg navbar-light">
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="row">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="file_dropdown">File</a>
+                    <div class="dropdown-menu" aria-labelledby="file_dropdown">
+                        <a id="load" class="dropdown-item" href="#">Upload...</a>
+                        <a id="save" class="dropdown-item" href="#">Save to Server</a>
+                        <a id="download" class="dropdown-item" href="#">Download...</a>
+                        <a id="preferences" class="dropdown-item" href="#" >Preferences...</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="samples_dropdown">Samples</a>
+                    <div class="dropdown-menu" aria-labelledby="samples_dropdown">
+                        <a id="manage_samples" class="dropdown-item" href="#">Manage Samples...</a>
+                        <a id="run_script" class="dropdown-item" href="#">Run Script...</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<input type="file" id="fileInput" style="display: none;" accept=".xlsx">

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>dzToolBox</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='global/DZ.ico') }}">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hyperformula/dist/hyperformula.full.min.js"></script>
@@ -17,8 +18,7 @@
 
 </head>
 <body>
-    {% include "data_editor/include/info_bar.html" %}
-    {% include "data_editor/include/toolbar.html" %}
+    {% include "data_editor/include/toolbars/info_bar.html" %}
 
     <div class="panes-container">
         <div class="left-pane" id="left-pane">
